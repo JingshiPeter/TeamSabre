@@ -42,17 +42,31 @@ def get_rank_dic():
 	    "cpt" : set(cpt_ids),
 	    "fo" : set(fo_ids),
 	    }
-	return rank_dic
+	print rank_dic
 
-#def get_fleet_dic():
+def get_fleet_dic():
 	# return a fleet dictionary
 	# example :
 	# fleets = {
-
 	# 'a330' : {'900201', '900421'},
 	# 'a320' : {'900488', '900424'}
 
+<<<<<<< HEAD
 	# }
+	return 0
+=======
+	# } 
+	A320_ids = crew_df[crew_df.Cur_Fleet == "A320"]['Crew_ID']
+	A330_ids = crew_df[crew_df.Cur_Fleet == "A330"]['Crew_ID']
+	print "number of pilots for A320 is " + str(len(A320_ids))
+	print "number of pilots for A330 is " + str(len(A330_ids))
+	fleet_dic = {
+	    "A320" : set(A320_ids),
+	    "A330" : set(A330_ids),
+	    }
+	print fleet_dic
+>>>>>>> origin/master
+
 #def get_from_fleet_dic():
 
 #def get_to_fleet_dic():
@@ -62,9 +76,17 @@ def get_rank_dic():
 #def get_to_rank_dic():
 
 #def get_from_base_dic():
+def get_to_base_dic():
+    bF_ids = crew_df[(crew_df.Bid_BaseChange == 1) | (crew_df.Bid_BaseChange == 2)]['Crew_ID']
+    #print "number of pilots wanting base change is " + str(len(bO_ids))
+    baseBid_dict = {
+	"Base Bid" : set(bF_ids),
+	}
+    return baseBid_dict
+        
 
 <<<<<<< Updated upstream
-def get_to_base_dic():
+
 =======
 #def get_to_base_dic():
 	
