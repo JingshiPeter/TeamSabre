@@ -24,6 +24,15 @@ def get_rank_dic():
 	# 'fo' : {'900424'}
 
 	# }
+	cpt_ids = crew_df[crew_df.Rank == "CPT"]['Crew_ID']
+	fo_ids = crew_df[crew_df.Rank == "FO"]['Crew_ID']
+	print "number of first captains is " + str(len(cpt_ids))
+	print "number of first officers is " + str(len(fo_ids))
+	rank_dic = {
+	    "cpt" : set(cpt_ids),
+	    "fo" : set(fo_ids),
+	    }
+	return rank_dic
 
 def get_fleet_dic():
 	# return a fleet dictionary
@@ -45,4 +54,3 @@ def get_to_rank_dic():
 def get_from_base_dic():
 
 def get_to_base_dic():
-	
