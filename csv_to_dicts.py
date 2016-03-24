@@ -30,7 +30,7 @@ def get_rank_dic():
 	print "number of first officers is " + str(len(fo_ids))
 	rank_dic = {
 	    "cpt" : set(cpt_ids),
-	    "fo" : set(fo_ids),
+	    "fo" : set(fo_ids)
 	    }
 	return rank_dic
 
