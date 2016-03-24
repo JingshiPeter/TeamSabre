@@ -52,7 +52,7 @@ def get_fleet_dic():
 	# 'a330' : {'900201', '900421'},
 	# 'a320' : {'900488', '900424'}
 
-	# }  ctrl + / is convert # into real. 
+	# } 
 	A320_ids = crew_df[crew_df.Cur_Fleet == "A320"]['Crew_ID']
 	A330_ids = crew_df[crew_df.Cur_Fleet == "A330"]['Crew_ID']
 	print "number of pilots for A320 is " + str(len(A320_ids))
