@@ -15,11 +15,15 @@ def get_base_dic():
 	# 'b1' : {'900488', '900421'},
 	# 'b2' : {'900201', '900424'}
 	
-	for index,row in Crew_df.iterrows():
-            print row['Crew_ID']
-            print row['Current_base']
-
-	# }
+	b1_ids = crew_df[crew_df.Current_Base == 1]['Crew_ID']
+	b2_ids = crew_df[crew_df.Current_Base == 2]['Crew_ID']
+	print "number of pilots in base 1 is " + str(len(b1_ids))
+	print "number of pilots in base 2 is " + str(len(b2_ids))
+	base_dict = {
+	    "B1" : set(b1_ids),
+	    "B2" : set(b2_ids),
+	    }
+	return base_dict
 
 def get_rank_dic():
 	# return a rank dictionary
