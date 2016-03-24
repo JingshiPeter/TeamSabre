@@ -1,2 +1,2 @@
-// Hello world from Peter
+# Hello world from Peter
 print "hello world"
