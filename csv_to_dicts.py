@@ -5,6 +5,8 @@ CREWDATA_CSV = 'CrewData.csv'
 
 crew_df = pandas.read_csv(CREWDATA_CSV)
 
+print crew_df.columns
+
 def get_base_dic():
 	# return a base dictionary
 	# example : 
@@ -12,8 +14,16 @@ def get_base_dic():
 
 	# 'b1' : {'900488', '900421'},
 	# 'b2' : {'900201', '900424'}
-
-	# }
+	
+	b1_ids = crew_df[crew_df.Current_Base == 1]['Crew_ID']
+	b2_ids = crew_df[crew_df.Current_Base == 2]['Crew_ID']
+	print "number of pilots in base 1 is " + str(len(b1_ids))
+	print "number of pilots in base 2 is " + str(len(b2_ids))
+	base_dict = {
+	    "B1" : set(b1_ids),
+	    "B2" : set(b2_ids),
+	    }
+	return base_dict
 
 def get_rank_dic():
 	# return a rank dictionary
@@ -34,7 +44,7 @@ def get_rank_dic():
 	    }
 	return rank_dic
 
-def get_fleet_dic():
+#def get_fleet_dic():
 	# return a fleet dictionary
 	# example :
 	# fleets = {
@@ -43,14 +53,19 @@ def get_fleet_dic():
 	# 'a320' : {'900488', '900424'}
 
 	# }
-def get_from_fleet_dic():
+#def get_from_fleet_dic():
 
-def get_to_fleet_dic():
+#def get_to_fleet_dic():
 
-def get_from_rank_dic():
+#def get_from_rank_dic():
 
-def get_to_rank_dic():
+#def get_to_rank_dic():
 
-def get_from_base_dic():
+#def get_from_base_dic():
 
+<<<<<<< Updated upstream
 def get_to_base_dic():
+=======
+#def get_to_base_dic():
+	
+>>>>>>> Stashed changes
