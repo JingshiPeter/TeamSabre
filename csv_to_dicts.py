@@ -65,7 +65,16 @@ def get_fleet_dic():
 
 #def get_from_fleet_dic():
 
-#def get_to_fleet_dic():
+def get_to_fleet_dic():
+	fleet_change_to_A320_ids = crew_df[crew_df.Bid_FleetChange == "A320"]['Crew_ID']
+	fleet_change_to_A330_ids = crew_df[crew_df.Bid_FleetChange == "A330"]['Crew_ID']
+	print "number of pilots who bid fleetchange to A320 is " + str(len(fleet_change_to_A320_ids))
+	print "number of pilots who bid fleetchange to A330 is " + str(len(fleet_change_to_A330_ids))
+	to_fleet_dic = {
+	    "A320" : set(fleet_change_to_A320_ids),
+	    "A330" : set(fleet_change_to_A330_ids),
+	    }
+	print to_fleet_dic
 
 #def get_from_rank_dic():
 
