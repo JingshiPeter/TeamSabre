@@ -75,7 +75,15 @@ def get_fleet_dic():
 
 #def get_to_rank_dic():
 
-#def get_from_base_dic():
+def get_from_base_dic():
+    b1_o_ids = crew_df[(crew_df.Bid_BaseChange == 1)]['Crew_ID']
+    b2_o_ids = crew_df[(crew_df.Bid_BaseChange == 2)]['Crew_ID']
+    baseBidOriginal_dict = {
+	"B1" : set(b2_o_ids),
+	"B2" : set(b1_o_ids),
+	}
+    return baseBidOriginal_dict
+    
 def get_to_base_dic():
     bF_ids = crew_df[(crew_df.Bid_BaseChange == 1) | (crew_df.Bid_BaseChange == 2)]['Crew_ID']
     #print "number of pilots wanting base change is " + str(len(bO_ids))
