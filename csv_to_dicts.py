@@ -51,10 +51,11 @@ def get_fleet_dic():
 	# 'a330' : {'900201', '900421'},
 	# 'a320' : {'900488', '900424'}
 
-<<<<<<< HEAD
 	# }
 	return 0
 =======
+=======
+>>>>>>> origin/master
 	# } 
 	A320_ids = crew_df[crew_df.Cur_Fleet == "A320"]['Crew_ID']
 	A330_ids = crew_df[crew_df.Cur_Fleet == "A330"]['Crew_ID']
@@ -65,11 +66,20 @@ def get_fleet_dic():
 	    "A330" : set(A330_ids),
 	    }
 	print fleet_dic
->>>>>>> origin/master
+
 
 #def get_from_fleet_dic():
 
-#def get_to_fleet_dic():
+def get_to_fleet_dic():
+	fleet_change_to_A320_ids = crew_df[crew_df.Bid_FleetChange == "A320"]['Crew_ID']
+	fleet_change_to_A330_ids = crew_df[crew_df.Bid_FleetChange == "A330"]['Crew_ID']
+	print "number of pilots who bid fleetchange to A320 is " + str(len(fleet_change_to_A320_ids))
+	print "number of pilots who bid fleetchange to A330 is " + str(len(fleet_change_to_A330_ids))
+	to_fleet_dic = {
+	    "A320" : set(fleet_change_to_A320_ids),
+	    "A330" : set(fleet_change_to_A330_ids),
+	    }
+	print to_fleet_dic
 
 #def get_from_rank_dic():
 
@@ -93,7 +103,6 @@ def get_to_base_dic():
     return baseBid_dict
         
 
-<<<<<<< Updated upstream
 
 =======
 #def get_to_base_dic():
