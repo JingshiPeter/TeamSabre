@@ -114,10 +114,11 @@ def get_future_position(base, fleet, rank):
 	# return non-fix group pilot ids whose future position is input
 	return 0
 
-def get_orig_position(base, fleet, rank):
+def get_orig_position(base,fleet, rank):
 	#Non_fixed_orig = crew_df[(crew_df.Bid_RankChange == 'Y') | (crew_df.Bid_BaseChange == 2) | (crew_df.Bid_BaseChange == 1) | (crew_df.Bid_FleetChange == 'A330')]['Crew_ID']
 	# return non-fix group pilot ids whose orig position is input
-	Non_fixed_orig = crew_df[(crew_df.Current_Base == base) & (crew_df.Cur_Fleet == fleet) & (crew_df.Rank == rank)]['Crew_ID']
+	Non_fixed_orig = crew_df[(crew_df.Current_Base == base)&(crew_df.Cur_Fleet == fleet)& (crew_df.Rank == rank)]['Crew_ID']
+	#& (crew_df.Cur_Fleet == fleet) & (crew_df.Rank == rank)
 	return  Non_fixed_orig
 
 def get_position(base, fleet, rank):
