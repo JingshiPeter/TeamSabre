@@ -1,0 +1,13 @@
+import pandas
+
+#DEFINE GLOBAL NAMES HERE
+CREWDATA_CSV = 'CrewData.csv'
+
+crew_df = pandas.read_csv(CREWDATA_CSV)
+bF_ids = crew_df[(crew_df.Bid_BaseChange == 1) | (crew_df.Bid_BaseChange == 2)]['Crew_ID']
+#print "number of pilots wanting base change is " + str(len(bO_ids))
+baseBid_dict = {
+"Base Bid" : set(bF_ids),
+}
+
+#df[(df.a < df.b) & (df.b < df.c)]
