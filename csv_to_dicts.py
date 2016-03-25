@@ -5,8 +5,6 @@ CREWDATA_CSV = 'CrewData.csv'
 
 crew_df = pandas.read_csv(CREWDATA_CSV)
 
-print crew_df.columns
-
 def get_base_dic():
 	# return a base dictionary
 	# example : 
@@ -42,7 +40,7 @@ def get_rank_dic():
 	    "cpt" : set(cpt_ids),
 	    "fo" : set(fo_ids)
 	    }
-	print rank_dic
+	return rank_dic
 
 def get_fleet_dic():
 	# return a fleet dictionary
@@ -52,11 +50,6 @@ def get_fleet_dic():
 	# 'a320' : {'900488', '900424'}
 
 	# }
-	return 0
-=======
-=======
->>>>>>> origin/master
-	# } 
 	A320_ids = crew_df[crew_df.Cur_Fleet == "A320"]['Crew_ID']
 	A330_ids = crew_df[crew_df.Cur_Fleet == "A330"]['Crew_ID']
 	print "number of pilots for A320 is " + str(len(A320_ids))
@@ -66,9 +59,10 @@ def get_fleet_dic():
 	    "A330" : set(A330_ids),
 	    }
 	print fleet_dic
+	return 0
 
-
-#def get_from_fleet_dic():
+def get_from_fleet_dic():
+	return 0
 
 def get_to_fleet_dic():
 	fleet_change_to_A320_ids = crew_df[crew_df.Bid_FleetChange == "A320"]['Crew_ID']
@@ -80,10 +74,13 @@ def get_to_fleet_dic():
 	    "A330" : set(fleet_change_to_A330_ids),
 	    }
 	print to_fleet_dic
+	return to_fleet_dic
 
-#def get_from_rank_dic():
+def get_from_rank_dic():
+	return 0
 
-#def get_to_rank_dic():
+def get_to_rank_dic():
+	return 0
 
 def get_from_base_dic():
     b1_o_ids = crew_df[(crew_df.Bid_BaseChange == 1)]['Crew_ID']
@@ -101,10 +98,3 @@ def get_to_base_dic():
 	"Base Bid" : set(bF_ids),
 	}
     return baseBid_dict
-        
-
-
-=======
-#def get_to_base_dic():
-	
->>>>>>> Stashed changes
