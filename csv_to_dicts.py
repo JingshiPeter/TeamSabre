@@ -37,8 +37,8 @@ def get_rank_dic():
 	print "number of first captains is " + str(len(cpt_ids))
 	print "number of first officers is " + str(len(fo_ids))
 	rank_dic = {
-	    "cpt" : set(cpt_ids),
-	    "fo" : set(fo_ids)
+	    "CPT" : set(cpt_ids),
+	    "FO" : set(fo_ids)
 	    }
 	return rank_dic
 
@@ -61,28 +61,28 @@ def get_fleet_dic():
 	print fleet_dic
 	return 0
 
-def get_from_fleet_dic():
+def get_orig_fleet_dic():
 	return 0
 
-def get_to_fleet_dic():
-	fleet_change_to_A320_ids = crew_df[crew_df.Bid_FleetChange == "A320"]['Crew_ID']
-	fleet_change_to_A330_ids = crew_df[crew_df.Bid_FleetChange == "A330"]['Crew_ID']
-	print "number of pilots who bid fleetchange to A320 is " + str(len(fleet_change_to_A320_ids))
-	print "number of pilots who bid fleetchange to A330 is " + str(len(fleet_change_to_A330_ids))
-	to_fleet_dic = {
-	    "A320" : set(fleet_change_to_A320_ids),
-	    "A330" : set(fleet_change_to_A330_ids),
+def get_future_fleet_dic():
+	fleet_change_future_A320_ids = crew_df[crew_df.Bid_FleetChange == "A320"]['Crew_ID']
+	fleet_change_future_A330_ids = crew_df[crew_df.Bid_FleetChange == "A330"]['Crew_ID']
+	print "number of pilots who bid fleetchange future A320 is " + str(len(fleet_change_future_A320_ids))
+	print "number of pilots who bid fleetchange future A330 is " + str(len(fleet_change_future_A330_ids))
+	future_fleet_dic = {
+	    "A320" : set(fleet_change_future_A320_ids),
+	    "A330" : set(fleet_change_future_A330_ids),
 	    }
-	print to_fleet_dic
-	return to_fleet_dic
+	print future_fleet_dic
+	return future_fleet_dic
 
-def get_from_rank_dic():
+def get_orig_rank_dic():
 	return 0
 
-def get_to_rank_dic():
+def get_future_rank_dic():
 	return 0
 
-def get_from_base_dic():
+def get_orig_base_dic():
     b1_o_ids = crew_df[(crew_df.Bid_BaseChange == 1)]['Crew_ID']
     b2_o_ids = crew_df[(crew_df.Bid_BaseChange == 2)]['Crew_ID']
     baseBidOriginal_dict = {
@@ -91,10 +91,28 @@ def get_from_base_dic():
 	}
     return baseBidOriginal_dict
     
-def get_to_base_dic():
+def get_future_base_dic():
     bF_ids = crew_df[(crew_df.Bid_BaseChange == 1) | (crew_df.Bid_BaseChange == 2)]['Crew_ID']
     #print "number of pilots wanting base change is " + str(len(bO_ids))
     baseBid_dict = {
 	"Base Bid" : set(bF_ids),
 	}
     return baseBid_dict
+
+
+def get_demand(base, fleet, rank, week):
+	# example: base = "B1", fleet = "A330", rank = "FO", week = 0
+	# return the demand at B1, A330, FO of week 0
+	return 0
+
+def get_future_position(base, fleet, rank):
+	# return non-fix group pilot ids whose future position is input
+	return 0
+
+def get_orig_position(base, fleet, rank):
+	# return non-fix group pilot ids whose orig position is input
+	return 0
+
+def get_position(base, fleet, rank):
+	# return fix group pilot ids whose position is input
+	return 0
