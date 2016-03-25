@@ -99,11 +99,16 @@ def get_future_base_dic():
 	}
     return baseBid_dict
 
+DEMANDDATA_CSV = 'DemandData.csv'
+
+demand_df = pandas.read_csv(DEMANDDATA_CSV)
+
 
 def get_demand(base, fleet, rank, week):
 	# example: base = "B1", fleet = "A330", rank = "FO", week = 0
 	# return the demand at B1, A330, FO of week 0
-	return 0
+	demand = demand_df[(demand_df.Weeks == week)][base+'_'+fleet[1:4]+rank]
+	return demand
 
 def get_future_position(base, fleet, rank):
 	# return non-fix group pilot ids whose future position is input
