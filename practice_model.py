@@ -2,7 +2,6 @@ from __future__ import division
 import pyomo.environ as pe
 
 model = pe.AbstractModel()
-
 model.m = pe.Param(within=NonNegativeIntegers)
 model.n = pe.Param(within=NonNegativeIntegers)
 
