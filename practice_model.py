@@ -1,31 +1,17 @@
 from __future__ import division
+import pandas
+import pyomo.opt
 import pyomo.environ as pe
+import scipy
+import itertools
+import logging
 
-model = pe.AbstractModel()
+model = pe.ConcreteModel()
+model.x = pe.Var([1,2], domain=pe.NonNegativeReals)
+model.OBJ = pe.Objective(expr = 2*model.x[1] + 3*model.x[2])
+model.Constraint1 = pe.Constraint(expr = 3*model.x[1] + 4*model.x[2] >= 1)
+solver = pyomo.opt.SolverFactory('cplex')
 
-model.m = pe.Param(within=NonNegativeIntegers)
-model.n = pe.Param(within=NonNegativeIntegers)
 
-model.I = pe.RangeSet(1, model.m)
-model.J = pe.RangeSet(1, model.n)
-
-model.a = pe.Param(model.I, model.J)
-model.b = pe.Param(model.I)
-model.c = pe.Param(model.J)
-
-# the next line declares a variable indexed by the set J
-model.x = pe.Var(model.J, domain=NonNegativeReals)
-
-def obj_expression(model):
-    return summation(model.c, model.x)
-
-model.OBJ = pe.Objective(rule=obj_expression)
-
-def ax_constraint_rule(model, i):
-    # return the expression for the constraint for i
-    return sum(model.a[i,j] * model.x[j] for j in model.J) >= model.b[i]
-
-# the next line creates one constraint for each member of the set model.I
-model.AxbConstraint = pe.Constraint(model.I, rule=ax_constraint_rule)
 
 
