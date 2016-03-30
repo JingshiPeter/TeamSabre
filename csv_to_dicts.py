@@ -2,8 +2,10 @@ import pandas
 
 #DEFINE GLOBAL NAMES HERE
 CREWDATA_CSV = 'CrewData.csv'
+DEMANDDATA_CSV = 'DemandData.csv'
 
 crew_df = pandas.read_csv(CREWDATA_CSV)
+demand_df = pandas.read_csv(DEMANDDATA_CSV)
 
 def get_base_dic():
 	###finished
@@ -127,7 +129,7 @@ def get_future_base_dic():
 def get_demand(base, fleet, rank, week):
 	# example: base = "B1", fleet = "A330", rank = "FO", week = 0
 	# return the demand at B1, A330, FO of week 0
-	return 0
+	return demand_df[base + '_' + fleet[1:] + rank][week]
 
 orig_rank_dic = get_orig_rank_dic()
 orig_fleet_dic = get_orig_fleet_dic()
