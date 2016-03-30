@@ -112,7 +112,8 @@ def get_demand(base, fleet, rank, week):
 
 def get_future_position(base, fleet, rank):
 	# return non-fix group pilot ids whose future position is input
-	return 0
+	Non_fixed_future = crew_df[(crew_df.Current_Base == base)&(crew_df.Cur_Fleet == fleet)& (crew_df.Rank == rank)]['Crew_ID']
+	return Non_fixed_future
 
 def get_orig_position(base,fleet, rank):
 	#Non_fixed_orig = crew_df[(crew_df.Bid_RankChange == 'Y') | (crew_df.Bid_BaseChange == 2) | (crew_df.Bid_BaseChange == 1) | (crew_df.Bid_FleetChange == 'A330')]['Crew_ID']
