@@ -235,6 +235,7 @@ for pilot in nonfixed_df['Crew_ID'].values:
                 		to_set.append((pilot,rank,fleet,base))
 
 model.nonfix_pilots = pe.Set(initialize = nonfixed_df['Crew_ID'].values)
+print "Number of nonfix_pilots is " + str(len(nonfixed_df['Crew_ID'].values))
 model.rank_pilots = pe.Set(initialize = rank_change)
 model.fleet_pilots = pe.Set(initialize = fleet_change)
 model.base_pilots = pe.Set(initialize = base_change)
