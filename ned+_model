@@ -262,7 +262,7 @@ def demand_rule(model, r, f, b, t):
     for p in fromPos[(fromPos.RANK==r)&(fromPos.FLEET==f)&(fromPos.BASE==b)]['ID'].values:
         rhs = rhs - model.Y[p,r,f,b,t]   
     rhs = rhs + model.S[r,f,b,t]
-    return rhs <= get_demand(r,f,b,t)
+    return rhs >= get_demand(r,f,b,t)
 
 model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=demand_rule)
 
