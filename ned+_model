@@ -167,6 +167,9 @@ def get_nonfix_pilots():
 def get_all_pilots():
 	return set(crew_df[crew_df.Rank != "SIM_INS"]['Crew_ID'])
 
+####trainer Pilots
+trainers = set(crew_df[(crew_df.Instructor.notnull())]['Crew_ID'])
+
 ####fixedPos
 def print_duplicate(a):
 	print [item for item, count in collections.Counter(a).items() if count > 1]
@@ -236,6 +239,7 @@ for pilot in nonfixed_df['Crew_ID'].values:
 
 model.nonfix_pilots = pe.Set(initialize = nonfixed_df['Crew_ID'].values)
 print "Number of nonfix_pilots is " + str(len(nonfixed_df['Crew_ID'].values))
+model.trainer_pilots = pe.Set(initialize = trainers)
 model.rank_pilots = pe.Set(initialize = rank_change)
 model.fleet_pilots = pe.Set(initialize = fleet_change)
 model.base_pilots = pe.Set(initialize = base_change)
@@ -248,25 +252,28 @@ model.fleet = pe.Set(initialize=['A330','A320'])
 model.base = pe.Set(initialize=[1,2])
 model.time = pe.Set(initialize=range(26))
 model.timestart = pe.Set(initialize=range(25))
+model.quarterstart = pe.Set(initialize = [0,13])
 
 model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.NonNegativeIntegers)
-
+model.V = pe.Var(model.pilots*model.time, domain=pe.Binary)
+model.T = pe.Var(model.trainer_pilots*model.time, domain=pe.Binary)
 ###shortage cost
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 1000)
 model.transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 10)
+
 #demand rule
 #checked
 def demand_rule(model, r, f, b, t):
     rhs = len(fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'])
     for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID'].values:
         rhs = rhs + model.Y[p,r,f,b,t]
-    #if p come to the position by a fleet change, it need 5 weeks training
-    for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID'].values:
+    #if p come to the position by a fleet change, it takes 5 weeks training
     	if(p in fleet_change and t >= 5) :
     		rhs = rhs - 1 + model.Y[p,r,f,b,t-5]
     	elif(p in fleet_change and t < 5) :
     		rhs = rhs - model.Y[p,r,f,b,t]
+
     for p in fromPos[(fromPos.RANK==r)&(fromPos.FLEET==f)&(fromPos.BASE==b)]['ID'].values:
         rhs = rhs - model.Y[p,r,f,b,t]
 
@@ -301,6 +308,13 @@ model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S) + model.
 solver = pyomo.opt.SolverFactory('cplex')
 
 model.Transition2.pprint()
+
+def vacation_rule(model, p, t):
+	lhs = 0
+	for i in range(13):
+		lhs += model.V[p,t+i]
+	return lhs >= 1
+model.Vacation = pe.Constraint(model.pilots*model.quarterstart, rule = vacation_rule)
 
 results = solver.solve(model, tee=True, keepfiles=False)
 if (results.solver.status != pyomo.opt.SolverStatus.ok):
