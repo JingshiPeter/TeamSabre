@@ -134,7 +134,7 @@ def get_future_base_dic():
 def get_demand(rank, fleet, base, week):
 	# example: base = "B1", fleet = "A330", rank = "FO", week = 0
 	# return the demand at B1, A330, FO of week 0
-	return demand_df['B'+ base + '_' + fleet[1:] + rank][week]
+	return demand_df['B'+ str(base) + '_' + fleet[1:] + rank][week]
 
 orig_rank_dic = get_orig_rank_dic()
 orig_fleet_dic = get_orig_fleet_dic()
