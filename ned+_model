@@ -249,7 +249,7 @@ model.time = pe.Set(initialize=range(26))
 model.timestart = pe.Set(initialize=range(25))
 
 model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
-model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
+model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.NonNegativeIntegers)
 
 ###shortage cost
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 1000)
