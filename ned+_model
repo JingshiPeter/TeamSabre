@@ -215,20 +215,35 @@ fromPos.columns =['ID','RANK','FLEET','BASE']
 
 model = pe.ConcreteModel()
 model.pilots = pe.Set(initialize=get_all_pilots())
+variable_set=[]
+from_set = []
+to_set = []
+
+for pilot in nonfixed_df['Crew_ID'].values:
+        for fleet in ['A320','A330']:
+            for base in [1,2]:
+                for rank in ['CPT','FO']:
+                	in_from = pilot in fromPos[(fromPos.RANK==rank)&(fromPos.FLEET==fleet)&(fromPos.BASE==base)]['ID'].values
+                	in_to = pilot in toPos[(toPos.RANK==rank)&(toPos.FLEET==fleet)&(toPos.BASE==base)]['ID'].values
+                	if(in_from or in_to):
+                		variable_set.append((pilot,rank,fleet,base))
+                	if in_from :
+                		from_set.append((pilot,rank,fleet,base))
+                	if in_to :
+                		to_set.append((pilot,rank,fleet,base))
+
 model.nonfix_pilots = pe.Set(initialize = nonfixed_df['Crew_ID'].values)
+model.rank_pilots = pe.Set(initialize = rank_change)
+model.fleet_pilots = pe.Set(initialize = fleet_change)
+model.base_pilots = pe.Set(initialize = base_change)
+model.from_pos = pe.Set(initialize = from_set)
+model.to_pos = pe.Set(initialize = to_set)
+
 model.fix_pilots = model.pilots - model.nonfix_pilots
 model.rank = pe.Set(initialize=['CPT','FO'])
 model.fleet = pe.Set(initialize=['A330','A320'])
 model.base = pe.Set(initialize=[1,2])
 model.time = pe.Set(initialize=range(26)) 
-
-variable_set=[]
-for pilot in nonfixed_df['Crew_ID'].values:
-        for fleet in ['A320','A330']:
-            for base in [1,2]:
-                for rank in ['CPT','FO']:
-                	if(pilot in fromPos[(fromPos.RANK==rank)&(fromPos.FLEET==fleet)&(fromPos.BASE==base)]['ID'].values or pilot in toPos[(toPos.RANK==rank)&(toPos.FLEET==fleet)&(toPos.BASE==base)]['ID'].values):
-                		variable_set.append((pilot,rank,fleet,base)) 
 
 model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
@@ -255,7 +270,18 @@ def pilot_pos_rule(model, pilot, t):
 	return lhs == 1
 model.PositionConst = pe.Constraint(model.nonfix_pilots*model.time, rule = pilot_pos_rule)
 
-model.PositionConst.pprint()
+# model.PositionConst.pprint()
+
+# all nonfix_pilots should transit only once--"from" postion should be decreasing
+def pilot_transit_rule(model, p, r, f, b, t):
+	return model.Y[p,r,f,b,t] == 0
+model.Transition = pe.Constraint(model.from_pos*model.time, rule = pilot_transit_rule)
+
+model.Transition.pprint()
+
+
+
+
 
 
 
