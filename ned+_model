@@ -247,8 +247,8 @@ model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=
 # model.Demand.pprint()
 
 #at time t, a pilot should ocupy one and only one position
-def pilot_pos_rule(model, p, t):
-	lhs = pe.summation(model.Y, index = [(p, r, f, b, t) for (p, r, f, b) in variable_set])
+def pilot_pos_rule(model, pilot, t):
+	lhs = pe.summation(model.Y, index = [(p, r, f, b, t) for (p, r, f, b) in variable_set if p == pilot])
 	return lhs == 1
 model.PositionConst = pe.Constraint(model.nonfix_pilots*model.time, rule = pilot_pos_rule)
 
