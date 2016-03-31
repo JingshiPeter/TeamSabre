@@ -292,7 +292,7 @@ solver = pyomo.opt.SolverFactory('cplex')
 
 model.Transition2.pprint()
 
-results = solver.solve(model, tee=True, keepfiles=False, options="mip_tolerances_integrality=1e-9 mip_tolerances_mipgap=0")
+results = solver.solve(model, tee=True, keepfiles=False)
 if (results.solver.status != pyomo.opt.SolverStatus.ok):
     logging.warning('Check solver not ok?')
 if (results.solver.termination_condition != pyomo.opt.TerminationCondition.optimal):  
