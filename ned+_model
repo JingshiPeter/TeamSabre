@@ -5,6 +5,7 @@ import scipy
 import itertools
 import cplex
 import pandas
+import logging
 
 #DEFINE GLOBAL NAMES HERE
 CREWDATA_CSV = 'CrewData.csv'
