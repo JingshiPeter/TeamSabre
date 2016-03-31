@@ -234,8 +234,14 @@ def demand_rule(model, r, f, b, t):
 
 model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=demand_rule)
 
+# model.Demand.pprint()
 
-model.Demand.pprint()
+#at time t, a pilot should ocupy one and only one position
+def pilot_pos_rule(model, p, t):
+	return pe.summation(model.Y) = 1
+model.PositionConst = pe.Constraint(model.pilots*model.time, rule = pilot_pos_rule)
+
+model.PositionConst.pprint()
 
 
 
