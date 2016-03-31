@@ -253,6 +253,7 @@ model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.NonNega
 
 ###shortage cost
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 1000)
+model.transition_cost = pe.Param(initialize = 10)
 #demand rule
 #checked
 def demand_rule(model, r, f, b, t):
@@ -274,21 +275,21 @@ def pilot_pos_rule(model, pilot, t):
 	lhs = pe.summation(model.Y, index = [(p, r, f, b, t) for (p, r, f, b) in variable_set if p == pilot])
 	return lhs == 1
 model.PositionConst = pe.Constraint(model.nonfix_pilots*model.time, rule = pilot_pos_rule)
-
 # model.PositionConst.pprint()
 
 # all nonfix_pilots should transit only once--"from" postion should be decreasing
 def pilot_transit_rule1(model, p, r, f, b, t):
 	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] >= 0
 model.Transition1 = pe.Constraint(model.from_pos*model.timestart, rule = pilot_transit_rule1)
-
 # model.Transition1.pprint()
+
 # "to" postion should be increasing
 def pilot_transit_rule2(model, p, r, f, b, t):
 	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] <= 0
 model.Transition2 = pe.Constraint(model.to_pos*model.timestart, rule = pilot_transit_rule2)
 
-model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S), sense=pe.minimize)
+model.total_trans_cost = pe.summation(model.Y, index = [(p, r, f, b, t) for(p, r, f, b) in to_set if t == 25])
+model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S) + model.total_trans_cost, sense=pe.minimize)
 solver = pyomo.opt.SolverFactory('cplex')
 
 model.Transition2.pprint()
