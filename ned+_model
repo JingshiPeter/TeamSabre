@@ -264,7 +264,7 @@ def demand_rule(model, r, f, b, t):
     #if p come to the position by a fleet change, it need 5 weeks training
     for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID'].values:
     	if(p in fleet_change and t >= 5) :
-    		rhs = rhs - 1 + model.Y[p,r,f,b,t-5]
+    		rhs = rhs - 1
     for p in fromPos[(fromPos.RANK==r)&(fromPos.FLEET==f)&(fromPos.BASE==b)]['ID'].values:
         rhs = rhs - model.Y[p,r,f,b,t]
 
