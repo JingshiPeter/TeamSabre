@@ -1,0 +1,5 @@
+rank,fleet,base,time,demand
+CPT,330,b1,1,10
+FO,330,b1,1,10
+CPT,330,b1,2,5
+FO,330,b1,2,5
