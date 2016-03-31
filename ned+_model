@@ -1,5 +1,4 @@
 import pandas
-import pyomo.opt
 import pyomo.environ as pe
 import scipy
 import itertools
@@ -132,10 +131,10 @@ def get_future_base_dic():
     return baseBid_dict
 
 
-def get_demand(base, fleet, rank, week):
+def get_demand(rank, fleet, base, week):
 	# example: base = "B1", fleet = "A330", rank = "FO", week = 0
 	# return the demand at B1, A330, FO of week 0
-	return demand_df[base + '_' + fleet[1:] + rank][week]
+	return demand_df['B'+ base + '_' + fleet[1:] + rank][week]
 
 orig_rank_dic = get_orig_rank_dic()
 orig_fleet_dic = get_orig_fleet_dic()
@@ -160,118 +159,84 @@ fleet_dic = get_fleet_dic()
 def get_position(base, fleet, rank):
 	# return fix group pilot ids whose position is input
 	return set(base_dic[base] and fleet_dic[fleet] and rank_dic[rank])
-	
-##################################
-#create the model
+
+def get_nonfix_pilots():
+	return set(crew_df[(crew_df.Bid_BaseChange.notnull()) | (crew_df.Bid_FleetChange.notnull())| (crew_df.Bid_RankChange.notnull())]['Crew_ID'])
+
+def get_all_pilots():
+	return set(crew_df[crew_df.Rank != "SIM_INS"]['Crew_ID'])
+
+####fixedPos
+def print_duplicate(a):
+	print [item for item, count in collections.Counter(a).items() if count > 1]
+
+nonfixed_df = crew_df[(crew_df.Bid_BaseChange.notnull()) | (crew_df.Bid_FleetChange.notnull())| (crew_df.Bid_RankChange.notnull())]
+fixed_df = crew_df[(~crew_df.Bid_BaseChange.notnull()) & (~crew_df.Bid_FleetChange.notnull()) & (~crew_df.Bid_RankChange.notnull())]
+
+#### toPos
+topos_list = []
+rank_change = set(crew_df[(crew_df.Bid_RankChange.notnull())]['Crew_ID'])
+fleet_change = set(crew_df[(crew_df.Bid_FleetChange.notnull())]['Crew_ID'])
+base_change = set(crew_df[(crew_df.Bid_BaseChange.notnull())]['Crew_ID'])
+for pilot in set(nonfixed_df['Crew_ID']):
+	cur = [pilot]
+	pilot_item = crew_df[crew_df.Crew_ID == pilot]
+	if pilot in rank_change:
+		print pilot_item
+		cur.append('CPT')
+		cur.append(pilot_item.Cur_Fleet.values[0])
+		cur.append(pilot_item.Current_Base.values[0])
+	elif pilot in fleet_change :
+		cur.append(pilot_item.Rank.values[0])
+		cur.append(pilot_item.Bid_FleetChange.values[0])
+		cur.append(pilot_item.Current_Base.values[0])
+	elif pilot in base_change :
+		cur.append(pilot_item.Rank.values[0])
+		cur.append(pilot_item.Cur_Fleet.values[0])
+		cur.append(pilot_item.Bid_BaseChange.values[0])
+	topos_list.append(cur)
+
+toPos = pandas.DataFrame(topos_list)
+toPos.columns =['ID','RANK','FLEET','BASE']
+
+#### fromPos
+frompos_list = []
+for pilot in set(nonfixed_df['Crew_ID']):
+	cur = [pilot]
+	pilot_item = crew_df[crew_df.Crew_ID == pilot]
+	cur.append(pilot_item.Rank.values[0])
+	cur.append(pilot_item.Cur_Fleet.values[0])
+	cur.append(pilot_item.Current_Base.values[0])
+	frompos_list.append(cur)
+
+fromPos = pandas.DataFrame(frompos_list)
+fromPos.columns =['ID','RANK','FLEET','BASE']
+
+# ALL debuged before this point
+
 model = pe.ConcreteModel()
-#get crew list
-crews=list(set(crew_df['Crew_ID'].values))
-#define demand set
-a = set(1,2)
-a = {1,2}
-frbt_set=[]
-for t in range(26):
-    for fleet in ['A320','A330']:
-        for base in ['B1','B2']:
-            for rank in ['CPT','FO']:
-                frbt_set.append((fleet,rank,base,t))
-model.frbt_set=pe.Set(initialize=frbt_set)
-##################################
-#Option 1: 
+model.pilots = pe.Set(initialize=get_all_pilots())
+model.rank = pe.Set(initialize=['CPT','FO'])
+model.fleet = pe.Set(initialize=['A330','A320'])
+model.base = pe.Set(initialize=[1,2])
+model.time = pe.Set(initialize=range(26))
 
-#define variable set
-variable_set=[]
-for pilot in crews:
-    for t in range(26):
-        for fleet in ['A320','A330']:
-            for base in ['B1','B2']:
-                for rank in ['CPT','FO']:
-                    variable_set.append((pilot,fleet,rank,base,t))  
-model.y_pfrbt_set = pe.Set(initialize=variable_set)
+model.Y = pe.Var(model.pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
+model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 
-#define variable
-model.y_pfrbt = pe.Var(model.y_pfrbt_set, domain=pe.Binary)
-model.y_cost = pe.Var(model.y_pfrbt_set, domain=pe.NonNegativeReals)
-model.y_cost = pe.Param(model.y_pfrbt_set, domain=pe.NonNegativeReals)
-###    
-frbt_set=[]
-for t in range(26):
-    for fleet in ['A320','A330']:
-        for base in ['B1','B2']:
-            for rank in ['CPT','FO']:
-                variable_set.append((fleet,rank,base,t))  
-model.frbt_set = pe.Set(initialize=frbt_set) 
-             
+def demand_rule(model, r, f, b, t):
+    rhs = fixed_df[]
+    for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID']
+.values:
+        rhs = rhs + model.Y[p,r,f,b,t]
+    for p in fromPos[(fromPos.RANK==r)&(fromPos.FLEET==f)&(fromPos.BASE==b)]['ID']
+.values:
+        rhs = rhs - model.Y[p,r,f,b,t]   
+    rhs = rhs + model.S[r,f,b,t]
+    return rhs <= get_demand(r,f,b,t)
 
-##################################
-#Option 2:
+model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=demand_rule)
 
-#define variable set
-pbt=[]
-prt=[]
-pft=[]
-for pilot in crews:
-    for t in range(26):
-        for fleet in ['A320','A330']:
-            pft.append((pilot,fleet,t))
-for pilot in crews:
-    for t in range(26):            
-        for base in ['B1','B2']:
-            pbt.append((pilot,base,t))
-for pilot in crews:
-    for t in range(26):            
-        for rank in ['CPT','FO']:
-            prt.append((pilot,rank,t))
-                
-model.pbt_set = pe.Set(initialize=pbt)
-model.prt_set = pe.Set(initialize=prt)
-model.pft_set = pe.Set(initialize=pft)
 
-ft=[]
-rt=[]
-bt=[]
-for t in range(26):
-    for fleet in ['A320','A330']:
-        ft.append((fleet,t))  
-for t in range(26):            
-    for base in ['B1','B2']:
-        bt.append((base,t))
-for t in range(26):            
-    for rank in ['CPT','FO']:
-        rt.append((rank,t))  
-model.bt_set = pe.Set(initialize=bt) 
-model.rt_set = pe.Set(initialize=rt) 
-model.ft_set = pe.Set(initialize=ft)   
-           
-#define variable
-model.y_pbt = pe.Var(model.pbt_set, domain=pe.Binary)
-model.y_prt = pe.Var(model.prt_set, domain=pe.Binary)
-model.y_pft = pe.Var(model.pft_set, domain=pe.Binary)
-model.i_bt = pe.Var(model.bt_set, domain=pe.NonNegativeReals)
-model.i_rt = pe.Var(model.rt_set, domain=pe.NonNegativeReals)
-model.i_ft = pe.Var(model.ft_set, domain=pe.NonNegativeReals)
-model.s_frbt=pe.Var(model.frbt_set, domain=pe.NonNegativeReals)
 
-#define parameters
-model.demand = pe.Param(model.frbt_set,initialize=lambda model, f,r,b,t: get_demand(b, f, r, t))
-model.c_ft= pe.Param(model.ft_set,initialize=5000)
-####how to use index???
-model.index_rt= pe.Param(model.rt_set,initialize=1.1)
-model.c_bt=pe.Param(model.bt_set,initialize=15000)
 
-model.pprint()
-
-df.setindex(['rank','base','fleet'],inplace = True)
-
-df.ix[('CPT',330,'b1',2),'demand']
-
-df.reset_index()
-
-toPos.ix[('CPT',330,'b1'), :].pilot.values
-toPos.ix[('CPT',330,'b1'), 'pilot'].values
-
-demand_rule(model, 'CPT', 330, 'b1',1).to_string()
-##Create Objective
-#model.OBJ = pe.Objective(expr = pe.summation(model., model.))
-#demand constraint
-            
