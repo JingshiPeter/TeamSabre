@@ -130,12 +130,6 @@ demand_df = pandas.read_csv(DEMANDDATA_CSV)
 # 	}
 #     return baseBid_dict
 
-
-# def get_demand(rank, fleet, base, week):
-# 	# example: base = "B1", fleet = "A330", rank = "FO", week = 0
-# 	# return the demand at B1, A330, FO of week 0
-# 	return demand_df['B'+ str(base) + '_' + fleet[1:] + rank][week]
-
 # orig_rank_dic = get_orig_rank_dic()
 # orig_fleet_dic = get_orig_fleet_dic()
 # orig_base_dic = get_orig_base_dic()
@@ -159,6 +153,11 @@ demand_df = pandas.read_csv(DEMANDDATA_CSV)
 # def get_position(base, fleet, rank):
 # 	# return fix group pilot ids whose position is input
 # 	return set(base_dic[base] and fleet_dic[fleet] and rank_dic[rank])
+
+def get_demand(rank, fleet, base, week):
+	# example: base = "B1", fleet = "A330", rank = "FO", week = 0
+	# return the demand at B1, A330, FO of week 0
+	return demand_df['B'+ str(base) + '_' + fleet[1:] + rank][week]
 
 def get_nonfix_pilots():
 	return set(crew_df[(crew_df.Bid_BaseChange.notnull()) | (crew_df.Bid_FleetChange.notnull())| (crew_df.Bid_RankChange.notnull())]['Crew_ID'])
