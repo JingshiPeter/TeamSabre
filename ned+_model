@@ -215,10 +215,12 @@ fromPos.columns =['ID','RANK','FLEET','BASE']
 
 model = pe.ConcreteModel()
 model.pilots = pe.Set(initialize=get_all_pilots())
+model.nonfix_pilots = pe.Set(initialize = nonfixed_df['Crew_ID'].values)
+model.fix_pilots = model.pilots - nonfix_pilots
 model.rank = pe.Set(initialize=['CPT','FO'])
 model.fleet = pe.Set(initialize=['A330','A320'])
 model.base = pe.Set(initialize=[1,2])
-model.time = pe.Set(initialize=range(26))
+model.time = pe.Set(initialize=range(26)) 
 
 model.Y = pe.Var(model.pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
@@ -234,14 +236,15 @@ def demand_rule(model, r, f, b, t):
 
 model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=demand_rule)
 
-# model.Demand.pprint()
+model.Demand.pprint()
 
 #at time t, a pilot should ocupy one and only one position
 def pilot_pos_rule(model, p, t):
+	# lhs = pe.summation(model.Y, index = [(r, f, b, t) for 
 	return pe.summation(model.Y) == 1
 model.PositionConst = pe.Constraint(model.pilots*model.time, rule = pilot_pos_rule)
 
-model.PositionConst.pprint()
+# model.PositionConst.pprint()
 
 
 
