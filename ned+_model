@@ -261,8 +261,12 @@ def demand_rule(model, r, f, b, t):
     rhs = len(fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'])
     for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID'].values:
         rhs = rhs + model.Y[p,r,f,b,t]
+    for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID'].values:
+    	if(p in fleet_change and t >= 2) :
+    		rhs = rhs - 1 + model.Y[p,r,f,b,t-2]
     for p in fromPos[(fromPos.RANK==r)&(fromPos.FLEET==f)&(fromPos.BASE==b)]['ID'].values:
-        rhs = rhs - model.Y[p,r,f,b,t]   
+        rhs = rhs - model.Y[p,r,f,b,t]
+
     rhs = rhs + model.S[r,f,b,t]
     return rhs >= get_demand(r,f,b,t)
 
