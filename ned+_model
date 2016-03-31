@@ -291,6 +291,14 @@ model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S), sense=p
 solver = pyomo.opt.SolverFactory('cplex')
 
 model.Transition2.pprint()
+
+results = solver.solve(model, tee=True, keepfiles=False, options="mip_tolerances_integrality=1e-9 mip_tolerances_mipgap=0")
+if (results.solver.status != pyomo.opt.SolverStatus.ok):
+    logging.warning('Check solver not ok?')
+if (results.solver.termination_condition != pyomo.opt.TerminationCondition.optimal):  
+    logging.warning('Check solver optimality?')
+model.load(results)
+
 print 'Total cost = ', model.OBJ()
 
 
