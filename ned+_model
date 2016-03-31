@@ -308,10 +308,6 @@ def pilot_transit_rule2(model, p, r, f, b, t):
 	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] <= 0
 model.Transition2 = pe.Constraint(model.to_pos*model.timestart, rule = pilot_transit_rule2)
 
-model.total_trans_cost = pe.summation(model.transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in to_set ])
-model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S) + model.total_trans_cost, sense=pe.minimize)
-solver = pyomo.opt.SolverFactory('cplex')
-
 model.Transition2.pprint()
 
 def vacation_rule(model, p, t):
@@ -320,6 +316,11 @@ def vacation_rule(model, p, t):
 		lhs += model.V[p,t+i]
 	return lhs >= 1
 model.Vacation = pe.Constraint(model.pilots*model.quarterstart, rule = vacation_rule)
+
+
+model.total_trans_cost = pe.summation(model.transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in to_set ])
+model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S) + model.total_trans_cost, sense=pe.minimize)
+solver = pyomo.opt.SolverFactory('cplex')
 
 results = solver.solve(model, tee=True, keepfiles=False)
 if (results.solver.status != pyomo.opt.SolverStatus.ok):
