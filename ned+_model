@@ -253,7 +253,7 @@ model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.NonNega
 
 ###shortage cost
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 1000)
-model.transition_cost = pe.Param(initialize = 10)
+model.transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 10)
 #demand rule
 #checked
 def demand_rule(model, r, f, b, t):
