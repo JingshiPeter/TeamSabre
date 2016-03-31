@@ -291,6 +291,7 @@ model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S), sense=p
 solver = pyomo.opt.SolverFactory('cplex')
 
 model.Transition2.pprint()
+print 'Total cost = ', model.OBJ()
 
 
 
