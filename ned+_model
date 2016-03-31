@@ -1,4 +1,5 @@
 import pandas
+import pyomo.opt
 import pyomo.environ as pe
 import scipy
 import itertools
