@@ -228,10 +228,9 @@ for pilot in nonfixed_df['Crew_ID'].values:
             for base in [1,2]:
                 for rank in ['CPT','FO']:
                 	if(pilot in fromPos[(fromPos.RANK==rank)&(fromPos.FLEET==fleet)&(fromPos.BASE==base)]['ID'].values or pilot in toPos[(toPos.RANK==rank)&(toPos.FLEET==fleet)&(toPos.BASE==base)]['ID'].values):
-                		variable_set.append([pilot,rank,fleet,base]) 
+                		variable_set.append((pilot,rank,fleet,base)) 
 
-# model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
-model.Y = pe.Var(variable_set, domain=pe.Binary)
+model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 
 #demand rule
@@ -252,7 +251,7 @@ model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=
 #at time t, a pilot should ocupy one and only one position
 #checked
 def pilot_pos_rule(model, pilot, t):
-	lhs = pe.summation(model.Y, index = [(p, r, f, b, t) for [p, r, f, b] in variable_set if p == pilot])
+	lhs = pe.summation(model.Y, index = [(p, r, f, b, t) for (p, r, f, b) in variable_set if p == pilot])
 	return lhs == 1
 model.PositionConst = pe.Constraint(model.nonfix_pilots*model.time, rule = pilot_pos_rule)
 
