@@ -284,7 +284,7 @@ def pilot_transit_rule2(model, p, r, f, b, t):
 	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] <= 0
 model.Transition2 = pe.Constraint(model.to_pos*model.timestart, rule = pilot_transit_rule2)
 
-model.OBJ = pe.Objective(expr = pe.summation(model.S, 1000), sense=pe.minimize)
+model.OBJ = pe.Objective(expr = pe.summation(1000, model.S), sense=pe.minimize)
 solver = pyomo.opt.SolverFactory('cplex')
 
 model.Transition2.pprint()
