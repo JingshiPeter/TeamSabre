@@ -243,7 +243,8 @@ model.fix_pilots = model.pilots - model.nonfix_pilots
 model.rank = pe.Set(initialize=['CPT','FO'])
 model.fleet = pe.Set(initialize=['A330','A320'])
 model.base = pe.Set(initialize=[1,2])
-model.time = pe.Set(initialize=range(26)) 
+model.time = pe.Set(initialize=range(26))
+model.timestart = pe.Set(initialize=range(25))
 
 model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
@@ -274,8 +275,8 @@ model.PositionConst = pe.Constraint(model.nonfix_pilots*model.time, rule = pilot
 
 # all nonfix_pilots should transit only once--"from" postion should be decreasing
 def pilot_transit_rule(model, p, r, f, b, t):
-	return model.Y[p,r,f,b,t] == 0
-model.Transition = pe.Constraint(model.from_pos*model.time, rule = pilot_transit_rule)
+	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] >= 0
+model.Transition = pe.Constraint(model.from_pos*model.timestart, rule = pilot_transit_rule)
 
 model.Transition.pprint()
 
