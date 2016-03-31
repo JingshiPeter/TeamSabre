@@ -310,6 +310,7 @@ model.Transition2 = pe.Constraint(model.to_pos*model.timestart, rule = pilot_tra
 
 model.Transition2.pprint()
 
+### at least one vacation per quarter
 def vacation_rule(model, p, t):
 	lhs = 0
 	for i in range(13):
@@ -322,12 +323,19 @@ model.total_trans_cost = pe.summation(model.transition_cost, model.Y, index = [(
 model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S) + model.total_trans_cost, sense=pe.minimize)
 solver = pyomo.opt.SolverFactory('cplex')
 
+
 results = solver.solve(model, tee=True, keepfiles=False)
 if (results.solver.status != pyomo.opt.SolverStatus.ok):
     logging.warning('Check solver not ok?')
 if (results.solver.termination_condition != pyomo.opt.TerminationCondition.optimal):  
     logging.warning('Check solver optimality?')
 model.load(results)
+
+print 'Daeun, Please start coding below'
+
+
+print 'Mridula, Please start coding below'
+
 
 print 'Total cost = ', model.OBJ()
 
