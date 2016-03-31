@@ -225,7 +225,7 @@ model.Y = pe.Var(model.pilots*model.rank*model.fleet*model.base*model.time, doma
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 
 def demand_rule(model, r, f, b, t):
-    rhs = fixed_df[]
+    rhs = fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]
     for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID']
 .values:
         rhs = rhs + model.Y[p,r,f,b,t]
