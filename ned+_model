@@ -334,10 +334,14 @@ model.load(results)
 print 'Daeun, Please start coding below'
 
 
-print 'Mridula, Please start coding below'
+print 'Mridula at time t, pilot P changed position'
 
 
 print 'Total cost = ', model.OBJ()
+
+instance.solutions.load_from(results)
+
+
 
 
 
