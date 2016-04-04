@@ -340,6 +340,7 @@ print 'Mridula at time t, pilot P changed position'
 print 'Total cost = ', model.OBJ()
 
 instance.solutions.load_from(results)
+model.solutions.load_from(results)
 
 
 
