@@ -332,7 +332,7 @@ def vacation_rule(model, p, t):
 	lhs = 0
 	for i in range(13):
 		lhs += model.V[p,t+i]
-	return lhs >= 1
+	return lhs >= 0
 model.Vacation = pe.Constraint(model.pilots*model.quarterstart, rule = vacation_rule)
 
 
