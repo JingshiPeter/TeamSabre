@@ -326,8 +326,8 @@ def pilot_vacation_slot_exceed(model, t):
 model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
 
 def trainee_var_binding_rule(model, p, r, f, b, t):
-	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] - model.Trainee[p, t] <= 0
-model.trainee_var_binding = pe.Constraint(mode.from_pos*model.timestart, rule=trainee_var_binding_rule)
+	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] - model.Trainee[p, t] == 0
+model.trainee_var_binding = pe.Constraint(model.from_pos*model.timestart, rule=trainee_var_binding_rule)
 
 # def trainer_binding_rule(model, b, t):
 # 	model.Y
