@@ -340,11 +340,12 @@ def shortage_position(model, t):
 	model.shortage = pe.Constraint(model.time, rule = shortage_position)
 	model.shortage.pprint()
 
+
  #vacation constraint. -vacation. pilot <= slot. 
 def pilot_vacation_slot_exceed(model, t):
 	return model.V[p,t, index = [t]] <= get_slot(t)  
 	model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
- 
+  
 print 'Mridula, Please start coding below'
 
 
