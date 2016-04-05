@@ -329,7 +329,8 @@ if (results.solver.status != pyomo.opt.SolverStatus.ok):
     logging.warning('Check solver not ok?')
 if (results.solver.termination_condition != pyomo.opt.TerminationCondition.optimal):  
     logging.warning('Check solver optimality?')
-model.load(results)
+model.solutions.load_from(results)
+#model.load(results)
 
 print 'Daeun, Please start coding below'
 
@@ -340,7 +341,7 @@ print 'Mridula at time t, pilot P changed position: result visualzation'
 print 'Total cost = ', model.OBJ()
 
 #instance.solutions.load_from(results)
-model.solutions.load_from(results)
+#model.solutions.load_from(results)
 
 
 
