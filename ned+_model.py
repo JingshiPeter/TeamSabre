@@ -318,7 +318,10 @@ def get_slot(t):
 
  #vacation constraint. -vacation. pilot <= slot. 
 def pilot_vacation_slot_exceed(model, t):
-	return pe.summation(model.V, index = [(p,t) for (p,t) in model.pilots*model.time if t == t]) <= get_slot(t)  
+	lhs = 0
+	for(pilot in model.pilots):
+		lhs += model.V[pilot,t]
+	return lhs <= get_slot(t)  
 model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
 
 # def trainer_binding_rule(model, b, t):
