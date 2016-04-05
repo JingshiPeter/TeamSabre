@@ -236,7 +236,7 @@ for pilot in nonfixed_df['Crew_ID'].values:
                 		from_set.append((pilot,rank,fleet,base))
                 	if in_to :
                 		to_set.append((pilot,rank,fleet,base))
-
+#sets
 model.nonfix_pilots = pe.Set(initialize = nonfixed_df['Crew_ID'].values)
 print "Number of nonfix_pilots is " + str(len(nonfixed_df['Crew_ID'].values))
 model.trainer_pilots = pe.Set(initialize = trainers)
@@ -253,14 +253,15 @@ model.base = pe.Set(initialize=[1,2])
 model.time = pe.Set(initialize=range(26))
 model.timestart = pe.Set(initialize=range(25))
 model.quarterstart = pe.Set(initialize = [0,13])
-
+#variables
 model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.NonNegativeIntegers)
 model.V = pe.Var(model.pilots*model.time, domain=pe.Binary)
 model.T = pe.Var(model.trainer_pilots*model.time, domain=pe.Binary)
-###shortage cost
+###shortage cost_Parameters
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 1000)
 model.transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 10)
+model.vacation_slot = pe.Param(model.time)
 
 #demand rule
 #checked
@@ -284,7 +285,7 @@ def demand_rule(model, r, f, b, t):
 
     rhs = rhs + model.S[r,f,b,t]
     return rhs >= get_demand(r,f,b,t)
-
+ 
 model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=demand_rule)
 
 # model.Demand.pprint()
@@ -319,6 +320,7 @@ def vacation_rule(model, p, t):
 model.Vacation = pe.Constraint(model.pilots*model.quarterstart, rule = vacation_rule)
 
 
+
 model.total_trans_cost = pe.summation(model.transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in to_set ])
 model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S) + model.total_trans_cost, sense=pe.minimize)
 solver = pyomo.opt.SolverFactory('cplex')
@@ -332,13 +334,21 @@ if (results.solver.termination_condition != pyomo.opt.TerminationCondition.optim
 model.load(results)
 
 print 'Daeun, Please start coding below'
+#output of the shortage.in that position. in that week. print
+def shortage_position(model, t):
+	return model.S[t, index = [t]] 
+	model.shortage = pe.Constraint(model.time, rule = shortage_position)
+	model.shortage.pprint()
 
-
+ #vacation constraint. -vacation. pilot <= slot. 
+def pilot_vacation_slot_exceed(model, t):
+	return model.V[p,t, index = [t]] <= get_slot(t)  
+	model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
+ 
 print 'Mridula, Please start coding below'
 
 
 print 'Total cost = ', model.OBJ()
-
 
 
 
