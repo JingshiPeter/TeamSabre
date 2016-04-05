@@ -329,7 +329,7 @@ def trainee_var_binding_rule(model, p, r, f, b, t):
 	if(p in fleet_change):
 		return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] - model.Trainee[p, t] == 0
 	else:
-		return Constraint.Skip
+		return pe.Constraint.Skip
 model.trainee_var_binding = pe.Constraint(model.from_pos*model.timestart, rule=trainee_var_binding_rule)
 
 # def trainer_binding_rule(model, b, t):
