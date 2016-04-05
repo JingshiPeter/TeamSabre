@@ -336,12 +336,21 @@ print 'Daeun, Please start coding below'
 
 
 print 'Mridula at time t, pilot P changed position: result visualzation'
+# converting the week set into a list
+list_time = list(model.time.value)
+print list_time
+list_nfPilots = list(model.nonfix_pilots.value)
+
+# record the transition in each week
+
 
 
 print 'Total cost = ', model.OBJ()
 
 #instance.solutions.load_from(results)
 #model.solutions.load_from(results)
+
+
 
 
 
