@@ -340,6 +340,16 @@ print 'Mridula at time t, pilot P changed position: result visualzation'
 list_time = list(model.time.value)
 print list_time
 list_nfPilots = list(model.nonfix_pilots.value)
+print list_nfPilots
+
+for pilott in list_nfPilots: 
+	for i in list_time:
+		for base in list(model.base.value):
+			for rank in list(model.rank.value):
+				for fleet in list(model.fleet.value):
+					print str(pilott) + "__" + str(rank) + '__'+ str(fleet) + '__' + str(base) + '_week' + str(i) 
+					print model.Y[pilott,rank,fleet,base,i].value 
+
 
 # record the transition in each week
 
