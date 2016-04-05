@@ -10,10 +10,11 @@ import logging
 #DEFINE GLOBAL NAMES HERE
 CREWDATA_CSV = 'CrewData.csv'
 DEMANDDATA_CSV = 'DemandData.csv'
+VACATIONDATA_CSV = 'VacationData.csv'
 
 crew_df = pandas.read_csv(CREWDATA_CSV)
 demand_df = pandas.read_csv(DEMANDDATA_CSV)
-
+vacation_df = pandas.read_csv(VACATIONDATA_CSV)
 # def get_base_dic():
 # 	###finished
 # 	# return a base dictionary
@@ -258,6 +259,7 @@ model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.tim
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.NonNegativeIntegers)
 model.V = pe.Var(model.pilots*model.time, domain=pe.Binary)
 model.T = pe.Var(model.trainer_pilots*model.time, domain=pe.Binary)
+
 ###shortage cost
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 1000)
 model.transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 10)
@@ -309,6 +311,19 @@ def pilot_transit_rule2(model, p, r, f, b, t):
 model.Transition2 = pe.Constraint(model.to_pos*model.timestart, rule = pilot_transit_rule2)
 
 model.Transition2.pprint()
+
+
+def get_slot(t):
+	return vacation_df["Available_Vacation_Slots"][t]
+print get_slot(0)
+
+ #vacation constraint. -vacation. pilot <= slot. 
+# def pilot_vacation_slot_exceed(model, t):
+# 	return model.V[p,t, index = [t]] <= get_slot(t)  
+# model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
+
+# def trainer_binding_rule(model, b, t):
+# 	model.Y
 
 ### at least one vacation per quarter
 def vacation_rule(model, p, t):
