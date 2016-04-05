@@ -259,6 +259,7 @@ model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.tim
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.NonNegativeIntegers)
 model.V = pe.Var(model.pilots*model.time, domain=pe.Binary)
 model.T = pe.Var(model.trainer_pilots*model.time, domain=pe.Binary)
+model.Trainee = pe.Var(model.fleet_pilots*model.time, domain=pe.Binary)
 
 ###shortage cost
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 1000)
@@ -323,6 +324,10 @@ def pilot_vacation_slot_exceed(model, t):
 		lhs += model.V[pilot,t]
 	return lhs <= get_slot(t)  
 model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
+
+def trainee_var_binding_rule(model, p, r, f, b, t):
+	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] - model.Trainee[p, t] <= 0
+model.trainee_var_binding = pe.Constraint(mode.from_pos*model.timestart, rule=trainee_var_binding_rule)
 
 # def trainer_binding_rule(model, b, t):
 # 	model.Y
