@@ -315,12 +315,11 @@ model.Transition2.pprint()
 
 def get_slot(t):
 	return vacation_df["Available_Vacation_Slots"][t]
-print get_slot(0)
 
  #vacation constraint. -vacation. pilot <= slot. 
-# def pilot_vacation_slot_exceed(model, t):
-# 	return model.V[p,t, index = [t]] <= get_slot(t)  
-# model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
+def pilot_vacation_slot_exceed(model, t):
+	return model.V[p,t, index = [t]] <= get_slot(t)  
+model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
 
 # def trainer_binding_rule(model, b, t):
 # 	model.Y
