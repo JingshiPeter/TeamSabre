@@ -334,7 +334,7 @@ model.trainee_var_binding = pe.Constraint(model.from_pos*model.timestart, rule=t
 
 def trainee_trainer_rule(model, t):
 	total_trainer = 0
-	for p in trainer_pilots:
+	for p in model.trainer_pilots:
 		total_trainer += model.T[p,t]
 	total_trainee = 0
 	for p in fleet_change:
