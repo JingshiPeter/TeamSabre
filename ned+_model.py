@@ -255,7 +255,7 @@ for (p, r, f, b) in model.from_pos:
 
 print "\nTotal number of TR3233_1 qualified trainers is " + str(len(model.trainer_pilots))
 for p in model.trainer_pilots:
-	for t in model.time:
+	for t in model.timestart:
 		for b in model.base:
 			if model.T[p, b, t].value == 1 :
 				print "trainer " + p + " is training at week " + str(t)	+ " at base " + str(b)
@@ -263,7 +263,7 @@ for p in model.trainer_pilots:
 
 print "\nTotal number of pilot applies for fleet change is " + str(len(model.fleet_pilots))
 for p in model.fleet_pilots:
-	for t in model.time:
+	for t in model.timestart:
 		for b in model.base:
 			if model.Trainee[p, b, t].value == 1 :
 				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)			
