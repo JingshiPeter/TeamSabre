@@ -120,9 +120,8 @@ model.V = pe.Var(model.pilots*model.time, domain=pe.Binary)
 model.T = pe.Var(model.trainer_pilots*model.time, domain=pe.Binary)
 model.Trainee = pe.Var(model.fleet_pilots*model.time, domain=pe.Binary)
 
-###shortage cost
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 70000)
-model.normal_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 3500)
+model.normal_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 3500)
 model.base_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 15000)
 model.fleet_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 5000)
 #demand rule
