@@ -303,6 +303,11 @@ def pilot_pos_rule(model, pilot, t):
 model.PositionConst = pe.Constraint(model.nonfix_pilots*model.time, rule = pilot_pos_rule)
 # model.PositionConst.pprint()
 
+def pilot_transit_rule0(model, p, r, f, b):
+	return model.Y[p,r,f,b,0] == 1
+model.Transition0 = pe.Constraint(model.from_pos, rule = pilot_transit_rule0)
+# model.Transition0.pprint()
+
 # all nonfix_pilots should transit only once--"from" postion should be decreasing
 def pilot_transit_rule1(model, p, r, f, b, t):
 	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] >= 0
