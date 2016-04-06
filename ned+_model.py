@@ -105,6 +105,7 @@ model.fleet_pilots = pe.Set(initialize = fleet_change)
 model.base_pilots = pe.Set(initialize = base_change)
 model.from_pos = pe.Set(initialize = from_set)
 model.to_pos = pe.Set(initialize = to_set)
+model.all_pos = pe.Set(initialize = variable_set)
 
 model.fix_pilots = model.pilots - model.nonfix_pilots
 model.rank = pe.Set(initialize=['CPT','FO'])
@@ -197,7 +198,7 @@ def trainer_location_rule(model, p, r, f, b, t):
 		return model.T[p, b, t] <= model.Y[p,r,f,b,t]
 	else:
 		return pe.Constraint.Skip
-model.trainer_location = pe.Constraint(variable_set*model.time, rule=trainer_location_rule)
+model.trainer_location = pe.Constraint(model.all_pos*model.time, rule=trainer_location_rule)
 
 def trainee_var_binding_rule(model, p, r, f, b, t):
 	if(p in fleet_change):
