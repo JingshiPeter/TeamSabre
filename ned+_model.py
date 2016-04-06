@@ -378,7 +378,7 @@ print 'Daeun, Please start coding below'
 print 'Mridula at time t, pilot P changed position: result visualzation'
 # converting the week set into a list
 
-for (p, r, f, b) in from_pos:
+for (p, r, f, b) in model.from_pos:
 	for t in range(24):
 		if model.Y[p, r, f, b, t].value != model.Y[p, r, f, b, t+1].value:
 			print "Pilot " + str(p) + " changed at week " + t  
