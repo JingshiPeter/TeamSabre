@@ -117,15 +117,15 @@ model.quarterstart = pe.Set(initialize = [0,13])
 model.Y = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.NonNegativeIntegers)
 model.V = pe.Var(model.pilots*model.time, domain=pe.Binary)
-model.T = pe.Var(model.trainer_pilots*model.time, domain=pe.Binary)
-model.Trainee = pe.Var(model.fleet_pilots*model.time, domain=pe.Binary)
+model.T = pe.Var(model.trainer_pilots*model.base*model.time, domain=pe.Binary)
+model.Trainee = pe.Var(model.fleet_pilots*model.base*model.time, domain=pe.Binary)
 
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 70000)
 model.normal_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 3500)
 model.base_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 15000)
 model.fleet_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 5000)
 #demand rule
-#checked
+#TODO: need to figure out vacation, trainer cases.
 def demand_rule(model, r, f, b, t):
 	curr_fixed = fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'].values
 	rhs = len(curr_fixed)
@@ -194,20 +194,20 @@ model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = max_vacation
 
 def trainee_var_binding_rule(model, p, r, f, b, t):
 	if(p in fleet_change):
-		return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] - model.Trainee[p, t] == 0
+		return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] - model.Trainee[p, b, t] == 0
 	else:
 		return pe.Constraint.Skip
 model.trainee_var_binding = pe.Constraint(model.from_pos*model.timestart, rule=trainee_var_binding_rule)
 
-def trainee_trainer_rule(model, t):
+def trainee_trainer_rule(model, b, t):
 	total_trainer = 0
 	for p in model.trainer_pilots:
-		total_trainer += model.T[p,t]
+		total_trainer += model.T[p, b, t]
 	total_trainee = 0
 	for p in fleet_change:
-		total_trainee += model.Trainee[p,t]
+		total_trainee += model.Trainee[p, b, t]
 	return total_trainer == total_trainee
-model.trainee_trainer = pe.Constraint(model.time, rule = trainee_trainer_rule)
+model.trainee_trainer = pe.Constraint(model.base*model.time, rule = trainee_trainer_rule)
 
 ### at least one vacation per quarter
 def min_vacation_rule(model, p, t):
