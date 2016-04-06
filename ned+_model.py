@@ -378,10 +378,19 @@ print 'Daeun, Please start coding below'
 print 'Mridula at time t, pilot P changed position: result visualzation'
 # converting the week set into a list
 
+print "Total number of non-fix pilots is " + str(len(model.nonfix_pilots))
 for (p, r, f, b) in model.from_pos:
 	for t in range(24):
 		if model.Y[p, r, f, b, t].value != model.Y[p, r, f, b, t+1].value:
-			print "Pilot " + str(p) + " changed at week " + str(t)  
+			print "Pilot " + str(p) + " changed at week " + str(t)
+			if p in model.fleet_pilots :
+				print "This is a fleet change from " + f 
+			if p in model.rank_pilots :
+				print "This is a rank change from " + r 
+			if p in model.base_pilots :
+				print "This is a base change from " + b
+				
+
 
 print "Total number of TR3233_1 qualified trainers is " + str(len(model.trainer_pilots))
 for p in model.trainer_pilots:
