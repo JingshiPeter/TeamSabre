@@ -222,8 +222,8 @@ model.total_fleet_trans_cost = pe.summation(model.fleet_transition_cost, model.Y
 model.total_base_trans_cost = pe.summation(model.base_transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in model.to_pos if p in model.base_pilots ])
 
 model.total_trans_cost = model.total_fleet_trans_cost + model.total_base_trans_cost
-
-model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S) + model.total_trans_cost, sense=pe.minimize)
+model.total_shortage_cost = pe.summation(model.short_cost, model.S)
+model.OBJ = pe.Objective(expr = model.total_shortage_cost + model.total_trans_cost, sense=pe.minimize)
 solver = pyomo.opt.SolverFactory('cplex')
 
 
@@ -264,7 +264,8 @@ for p in model.fleet_pilots:
 # record the transition in each week
 
 
-print 'Total cost = ', model.OBJ()
 
+print 'Total cost = ', model.OBJ()
+print 'Shortage cost is = ', model.total_shortage_cost.value
 #instance.solutions.load_from(results)
 #model.solutions.load_from(results)
