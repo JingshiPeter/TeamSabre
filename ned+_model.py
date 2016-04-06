@@ -383,7 +383,7 @@ for (p, r, f, b) in model.from_pos:
 	for t in range(24):
 		if model.Y[p, r, f, b, t].value != model.Y[p, r, f, b, t+1].value:
 			print "Pilot " + str(p) + " changed at week " + str(t)
-			if p in model.fleet_pilots :
+			if str(p) in model.fleet_pilots :
 				print "This is a fleet change from " + f 
 			if p in model.rank_pilots :
 				print "This is a rank change from " + r 
