@@ -122,6 +122,7 @@ model.Trainee = pe.Var(model.fleet_pilots*model.time, domain=pe.Binary)
 
 ###shortage cost
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 70000)
+model.normal_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 3500)
 model.base_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 15000)
 model.fleet_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 5000)
 #demand rule
@@ -217,13 +218,17 @@ def min_vacation_rule(model, p, t):
 	return lhs >= 0
 model.Vacation = pe.Constraint(model.pilots*model.quarterstart, rule = min_vacation_rule)
 
-
+###OBJ###
+###Normal Operation:
+model.total_normal_cost = pe.summation(model.normal_cost, model.Y)
+###Transitions:
 model.total_fleet_trans_cost = pe.summation(model.fleet_transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in model.to_pos if p in model.fleet_pilots ])
 model.total_base_trans_cost = pe.summation(model.base_transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in model.to_pos if p in model.base_pilots ])
-
 model.total_trans_cost = model.total_fleet_trans_cost + model.total_base_trans_cost
+###Shortages:
 model.total_shortage_cost = pe.summation(model.short_cost, model.S)
-model.OBJ = pe.Objective(expr = model.total_shortage_cost + model.total_trans_cost, sense=pe.minimize)
+
+model.OBJ = pe.Objective(expr = model.total_shortage_cost + model.total_trans_cost + model.total_normal_cost, sense=pe.minimize)
 solver = pyomo.opt.SolverFactory('cplex')
 
 
@@ -265,8 +270,9 @@ for p in model.fleet_pilots:
 
 
 
-print 'Total cost = ', model.OBJ()
+print '\nTotal cost = ', model.OBJ()
 print 'Shortage cost is = ', model.total_shortage_cost()
 print 'Transition cost is = ', model.total_trans_cost()
+print 'Normal Operation cost is = ', model.total_normal_cost()
 #instance.solutions.load_from(results)
 #model.solutions.load_from(results)
