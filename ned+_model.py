@@ -131,7 +131,7 @@ def demand_rule(model, r, f, b, t):
 	rhs = len(curr_fixed)
 	for p in curr_fixed:
 		if(p in model.trainer_pilots):
-			rhs -= model.T[p,t]
+			rhs -= model.T[p, b ,t]
 	for p in curr_fixed:
 		# if p is in vacation
 		rhs -= model.V[p,t]
