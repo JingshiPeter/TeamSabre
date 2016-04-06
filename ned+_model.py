@@ -340,7 +340,7 @@ def trainee_trainer_rule(model, t):
 	for p in fleet_change:
 		total_trainee += model.Trainee[p,t]
 	return total_trainer == total_trainee
-model.trainee_trainer = pe.Constraint(model.time, rule = trainee_trainer_rule
+model.trainee_trainer = pe.Constraint(model.time, rule = trainee_trainer_rule)
 
 ### at least one vacation per quarter
 def vacation_rule(model, p, t):
