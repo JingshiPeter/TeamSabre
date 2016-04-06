@@ -273,8 +273,7 @@ def demand_rule(model, r, f, b, t):
 	for p in curr_fixed:
 		if(p in trainer_pilots):
 			rhs -= model.T[p,t]
-			
-    for p in fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'].values:
+	for p in curr_fixed:
     	# if p is in vacation
     	rhs -= model.V[p,t]
 
