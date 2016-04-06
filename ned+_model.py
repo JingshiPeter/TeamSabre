@@ -268,7 +268,7 @@ model.transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*mode
 #demand rule
 #checked
 def demand_rule(model, r, f, b, t):
-	curr_fixed = fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID']
+	curr_fixed = fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'].values
 	rhs = len(curr_fixed)
 	for p in curr_fixed:
 		if(p in trainer_pilots):
