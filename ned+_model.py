@@ -383,7 +383,7 @@ for pilott in list_nfPilots:
 			for rank in list(model.rank.value):
 				for fleet in list(model.fleet.value):
 					if pilott in model.trainer_pilots:
-						if model.T[pilott, i] == 1 :
+						if model.T[pilott, i].value == 1 :
 							print "pilot" + pilott + "is training at" + i 
 					if model.Y[pilott,rank,fleet,base,i].value == 0.0 or model.Y[pilott,rank,fleet,base,i].value == 1.0:
 						print str(pilott) + "__" + str(rank) + '__'+ str(fleet) + '__' + str(base) + '_week' + str(i) 
