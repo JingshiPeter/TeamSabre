@@ -382,7 +382,7 @@ print "Total number of non-fix pilots is " + str(len(model.nonfix_pilots))
 for (p, r, f, b) in model.from_pos:
 	for t in range(24):
 		if model.Y[p, r, f, b, t].value != model.Y[p, r, f, b, t+1].value:
-			print "Pilot " + str(p) + " changed at week " + str(t)
+			print "\nPilot " + str(p) + " changed at week " + str(t)
 			if str(p) in model.fleet_pilots :
 				print "This is a fleet change from " + str(f) 
 			if str(p) in model.rank_pilots :
