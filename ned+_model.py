@@ -319,7 +319,7 @@ def pilot_transit_rule2(model, p, r, f, b, t):
 	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] <= 0
 model.Transition2 = pe.Constraint(model.to_pos*model.timestart, rule = pilot_transit_rule2)
 
-model.Transition2.pprint()
+# model.Transition2.pprint()
 
 
 def get_slot(t):
@@ -394,7 +394,7 @@ for pilott in list_nfPilots:
 for p in model.trainer_pilots:
 	for t in range(25):
 		if model.T[p, t].value == 1.0 :
-			print "pilot" + p + "is training at" + str(t)					
+			print "trainer " + p + " is training at week " + str(t)					
 # record the transition in each week
 
 
