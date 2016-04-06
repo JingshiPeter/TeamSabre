@@ -391,11 +391,19 @@ for pilott in list_nfPilots:
 						print str(pilott) + "__" + str(rank) + '__'+ str(fleet) + '__' + str(base) + '_week' + str(i) 
 						print model.Y[pilott,rank,fleet,base,i].value 
 
+print "Total number of TR3233_1 qualified trainers is " + str(len(model.trainer_pilots))
+
 for p in model.trainer_pilots:
 	for t in range(25):
-		if model.T[p, t].value == 1.0 :
-			print "trainer " + p + " is training at week " + str(t)					
+		if model.T[p, t].value == 1 :
+			print "trainer " + p + " is training at week " + str(t)	
+
+for p in model.fleet_pilots:
+	for t in range(25):
+		if model.Trainee[p, t].value == 1 :
+			print "trainee " + p + " receives fleet training at week " + str(t)			
 # record the transition in each week
+
 
 
 
