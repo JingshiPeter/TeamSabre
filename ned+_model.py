@@ -377,31 +377,24 @@ print 'Daeun, Please start coding below'
 
 print 'Mridula at time t, pilot P changed position: result visualzation'
 # converting the week set into a list
-list_time = list(model.time.value)
-print list_time
-list_nfPilots = list(model.nonfix_pilots.value)
-print list_nfPilots
 
-for pilott in list_nfPilots: 
-	for i in list_time:
-		for base in list(model.base.value):
-			for rank in list(model.rank.value):
-				for fleet in list(model.fleet.value):
-					if model.Y[pilott,rank,fleet,base,i].value == 0.0 or model.Y[pilott,rank,fleet,base,i].value == 1.0:
-						print str(pilott) + "__" + str(rank) + '__'+ str(fleet) + '__' + str(base) + '_week' + str(i) 
-						print model.Y[pilott,rank,fleet,base,i].value 
+for (p, r, f, b) in from_pos:
+	for t in range(24):
+		if model.Y[p, r, f, b, t].value != model.Y[p, r, f, b, t+1].value:
+			print "Pilot " + str(p) + " changed at week " + t  
 
 print "Total number of TR3233_1 qualified trainers is " + str(len(model.trainer_pilots))
-
 for p in model.trainer_pilots:
 	for t in range(25):
 		if model.T[p, t].value == 1 :
 			print "trainer " + p + " is training at week " + str(t)	
 
+
+print "Total number of pilot applies for fleet change is " + str(len(model.fleet_pilots))
 for p in model.fleet_pilots:
 	for t in range(25):
 		if model.Trainee[p, t].value == 1 :
-			print "trainee " + p + " receives fleet training at week " + str(t)			
+			print "pilot " + p + " receives fleet training at week " + str(t)			
 # record the transition in each week
 
 
@@ -411,12 +404,3 @@ print 'Total cost = ', model.OBJ()
 
 #instance.solutions.load_from(results)
 #model.solutions.load_from(results)
-
-
-
-
-
-
-
-
-
