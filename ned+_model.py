@@ -202,7 +202,7 @@ model.trainer_location = pe.Constraint(model.all_pos*model.time, rule=trainer_lo
 
 def trainee_location_rule(model, p, r, f, b, t):
 	if p in model.fleet_pilots:
-		return model.T[p, b, t] <= model.Y[p,r,f,b,t]
+		return model.Trainee[p, b, t] <= model.Y[p,r,f,b,t]
 	else:
 		return pe.Constraint.Skip
 model.trainee_location = pe.Constraint(model.all_pos*model.time, rule=trainee_location_rule)
