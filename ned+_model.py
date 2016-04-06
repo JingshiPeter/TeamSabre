@@ -193,19 +193,19 @@ def max_vacation_slot_rule(model, t):
 	return lhs <= get_slot(t)  
 model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = max_vacation_slot_rule)
 
-def trainer_location_rule(model, p, r, f, b, t):
-	if p in model.trainer_pilots:
-		return model.T[p, b, t] <= model.Y[p,r,f,b,t]
-	else:
-		return pe.Constraint.Skip
-model.trainer_location = pe.Constraint(model.all_pos*model.time, rule=trainer_location_rule)
+# def trainer_location_rule(model, p, r, f, b, t):
+# 	if p in model.trainer_pilots:
+# 		return model.T[p, b, t] <= model.Y[p,r,f,b,t]
+# 	else:
+# 		return pe.Constraint.Skip
+# model.trainer_location = pe.Constraint(model.all_pos*model.time, rule=trainer_location_rule)
 
-def trainee_location_rule(model, p, r, f, b, t):
-	if p in model.fleet_pilots:
-		return model.Trainee[p, b, t] <= model.Y[p,r,f,b,t]
-	else:
-		return pe.Constraint.Skip
-model.trainee_location = pe.Constraint(model.all_pos*model.time, rule=trainee_location_rule)
+# def trainee_location_rule(model, p, r, f, b, t):
+# 	if p in model.fleet_pilots:
+# 		return model.Trainee[p, b, t] <= model.Y[p,r,f,b,t]
+# 	else:
+# 		return pe.Constraint.Skip
+# model.trainee_location = pe.Constraint(model.all_pos*model.time, rule=trainee_location_rule)
 
 def trainee_var_binding_rule(model, p, r, f, b, t):
 	if(p in fleet_change):
