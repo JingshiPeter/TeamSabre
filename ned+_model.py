@@ -266,6 +266,6 @@ for p in model.fleet_pilots:
 
 
 print 'Total cost = ', model.OBJ()
-print 'Shortage cost is = ', model.total_shortage_cost.value
+print 'Shortage cost is = ', model.total_shortage_cost
 #instance.solutions.load_from(results)
 #model.solutions.load_from(results)
