@@ -388,7 +388,7 @@ for pilott in list_nfPilots:
 
 for p in model.trainer_pilots:
 	for t in range(25):
-		if model.T[pilott, t].value == 1.0 :
+		if model.T[p, t].value == 1.0 :
 			print "pilot" + pilott + "is training at" + i 					
 # record the transition in each week
 
