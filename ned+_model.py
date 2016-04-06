@@ -169,7 +169,7 @@ def get_all_pilots():
 	return set(crew_df[crew_df.Rank != "SIM_INS"]['Crew_ID'])
 
 ####trainer Pilots
-trainers = set(crew_df[(crew_df.Instructor.notnull())]['Crew_ID'])
+trainers = set(crew_df[(crew_df.Instructor == "TR3233_1")]['Crew_ID'])
 
 ####fixedPos
 def print_duplicate(a):
