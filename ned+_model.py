@@ -372,15 +372,9 @@ if (results.solver.termination_condition != pyomo.opt.TerminationCondition.optim
 model.solutions.load_from(results)
 #model.load(results)
 
-print 'Daeun, Please start coding below'
-
-
-print 'Mridula at time t, pilot P changed position: result visualzation'
-# converting the week set into a list
-
-print "Total number of non-fix pilots is " + str(len(model.nonfix_pilots))
+print "\nTotal number of non-fix pilots is " + str(len(model.nonfix_pilots))
 for (p, r, f, b) in model.from_pos:
-	for t in range(24):
+	for t in model.timestart:
 		if model.Y[p, r, f, b, t].value != model.Y[p, r, f, b, t+1].value:
 			print "\nPilot " + str(p) + " changed at week " + str(t)
 			if str(p) in model.fleet_pilots :
@@ -392,16 +386,16 @@ for (p, r, f, b) in model.from_pos:
 				
 
 
-print "Total number of TR3233_1 qualified trainers is " + str(len(model.trainer_pilots))
+print "\nTotal number of TR3233_1 qualified trainers is " + str(len(model.trainer_pilots))
 for p in model.trainer_pilots:
-	for t in range(25):
+	for t in model.time:
 		if model.T[p, t].value == 1 :
 			print "trainer " + p + " is training at week " + str(t)	
 
 
-print "Total number of pilot applies for fleet change is " + str(len(model.fleet_pilots))
+print "\nTotal number of pilot applies for fleet change is " + str(len(model.fleet_pilots))
 for p in model.fleet_pilots:
-	for t in range(25):
+	for t in model.time:
 		if model.Trainee[p, t].value == 1 :
 			print "pilot " + p + " receives fleet training at week " + str(t)			
 # record the transition in each week
