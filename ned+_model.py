@@ -274,22 +274,22 @@ def demand_rule(model, r, f, b, t):
 		if(p in trainer_pilots):
 			rhs -= model.T[p,t]
 	for p in curr_fixed:
-    	# if p is in vacation
-    	rhs -= model.V[p,t]
+		# if p is in vacation
+		rhs -= model.V[p,t]
 
-    for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID'].values:
-        rhs += model.Y[p,r,f,b,t]
-    #if p come to the position by a fleet change, it takes 5 weeks training
-    	if(p in fleet_change and t >= 5) :
-    		rhs = rhs - 1 + model.Y[p,r,f,b,t-5]
-    	elif(p in fleet_change and t < 5) :
-    		rhs = rhs - model.Y[p,r,f,b,t]
+	for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID'].values:
+	    rhs += model.Y[p,r,f,b,t]
+	#if p come to the position by a fleet change, it takes 5 weeks training
+		if(p in fleet_change and t >= 5) :
+			rhs = rhs - 1 + model.Y[p,r,f,b,t-5]
+		elif(p in fleet_change and t < 5) :
+			rhs = rhs - model.Y[p,r,f,b,t]
 
-    for p in fromPos[(fromPos.RANK==r)&(fromPos.FLEET==f)&(fromPos.BASE==b)]['ID'].values:
-        rhs = rhs - model.Y[p,r,f,b,t]
+	for p in fromPos[(fromPos.RANK==r)&(fromPos.FLEET==f)&(fromPos.BASE==b)]['ID'].values:
+	    rhs = rhs - model.Y[p,r,f,b,t]
 
-    rhs = rhs + model.S[r,f,b,t]
-    return rhs >= get_demand(r,f,b,t)
+	rhs = rhs + model.S[r,f,b,t]
+	return rhs >= get_demand(r,f,b,t)
 
 model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=demand_rule)
 
