@@ -262,9 +262,9 @@ model.T = pe.Var(model.trainer_pilots*model.time, domain=pe.Binary)
 model.Trainee = pe.Var(model.fleet_pilots*model.time, domain=pe.Binary)
 
 ###shortage cost
-model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 1000)
-model.transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 10)
-
+model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 70000)
+model.base_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 15000)
+model.fleet_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 5000)
 #demand rule
 #checked
 def demand_rule(model, r, f, b, t):
@@ -303,6 +303,7 @@ def pilot_pos_rule(model, pilot, t):
 model.PositionConst = pe.Constraint(model.nonfix_pilots*model.time, rule = pilot_pos_rule)
 # model.PositionConst.pprint()
 
+# all nonfix_pilots should start being at their "from" position
 def pilot_transit_rule0(model, p, r, f, b):
 	return model.Y[p,r,f,b,0] == 1
 model.Transition0 = pe.Constraint(model.from_pos, rule = pilot_transit_rule0)
@@ -318,7 +319,6 @@ model.Transition1 = pe.Constraint(model.from_pos*model.timestart, rule = pilot_t
 def pilot_transit_rule2(model, p, r, f, b, t):
 	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] <= 0
 model.Transition2 = pe.Constraint(model.to_pos*model.timestart, rule = pilot_transit_rule2)
-
 # model.Transition2.pprint()
 
 
@@ -326,12 +326,12 @@ def get_slot(t):
 	return vacation_df["Available_Vacation_Slots"][t]
 
  #vacation constraint. -vacation. pilot <= slot. 
-def pilot_vacation_slot_exceed(model, t):
+def max_vacation_slot_rule(model, t):
 	lhs = 0
 	for pilot in model.pilots :
 		lhs += model.V[pilot,t]
 	return lhs <= get_slot(t)  
-model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
+model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = max_vacation_slot_rule)
 
 def trainee_var_binding_rule(model, p, r, f, b, t):
 	if(p in fleet_change):
@@ -351,15 +351,19 @@ def trainee_trainer_rule(model, t):
 model.trainee_trainer = pe.Constraint(model.time, rule = trainee_trainer_rule)
 
 ### at least one vacation per quarter
-def vacation_rule(model, p, t):
+def min_vacation_rule(model, p, t):
 	lhs = 0
 	for i in range(13):
 		lhs += model.V[p,t+i]
 	return lhs >= 0
-model.Vacation = pe.Constraint(model.pilots*model.quarterstart, rule = vacation_rule)
+model.Vacation = pe.Constraint(model.pilots*model.quarterstart, rule = min_vacation_rule)
 
 
-model.total_trans_cost = pe.summation(model.transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in to_set ])
+model.total_fleet_trans_cost = pe.summation(model.fleet_transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in model.to_pos if p in model.fleet_pilots ])
+model.total_base_trans_cost = pe.summation(model.base_transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in model.to_pos if p in model.base_pilots ])
+
+model.total_trans_cost = model.total_fleet_trans_cost + model.total_base_trans_cost
+
 model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S) + model.total_trans_cost, sense=pe.minimize)
 solver = pyomo.opt.SolverFactory('cplex')
 
@@ -399,8 +403,6 @@ for p in model.fleet_pilots:
 		if model.Trainee[p, t].value == 1 :
 			print "pilot " + p + " receives fleet training at week " + str(t)			
 # record the transition in each week
-
-
 
 
 print 'Total cost = ', model.OBJ()
