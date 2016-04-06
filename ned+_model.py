@@ -332,8 +332,15 @@ def trainee_var_binding_rule(model, p, r, f, b, t):
 		return pe.Constraint.Skip
 model.trainee_var_binding = pe.Constraint(model.from_pos*model.timestart, rule=trainee_var_binding_rule)
 
-# def trainer_binding_rule(model, b, t):
-# 	model.Y
+def trainee_trainer_rule(model, t):
+	total_trainer = 0
+	for p in trainer_pilots:
+		total_trainer += model.T[p,t]
+	total_trainee = 0
+	for p in fleet_change:
+		total_trainee += model.Trainee[p,t]
+	return total_trainer == total_trainee
+model.trainee_trainer = pe.Constraint(model.time, rule = trainee_trainer_rule
 
 ### at least one vacation per quarter
 def vacation_rule(model, p, t):
