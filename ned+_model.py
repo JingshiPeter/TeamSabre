@@ -120,11 +120,14 @@ model.S = pe.Var(model.rank*model.fleet*model.base*model.time, domain=pe.NonNega
 model.V = pe.Var(model.pilots*model.time, domain=pe.Binary)
 model.T = pe.Var(model.trainer_pilots*model.base*model.time, domain=pe.Binary)
 model.Trainee = pe.Var(model.fleet_pilots*model.base*model.time, domain=pe.Binary)
+model.VP = pe.Var(model.pilots*model.quarterstart, domain=pe.NonNegativeIntegers)
 
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 70000)
 model.normal_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 3500)
 model.base_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 15000)
 model.fleet_transition_cost = pe.Param(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, initialize = 5000)
+model.vacation_penalty = pe.Param(model.pilots*model.quarterstart, initialize = 3000)
+
 #demand rule
 #TODO: need to figure out vacation, trainer cases.
 def demand_rule(model, r, f, b, t):
@@ -155,7 +158,7 @@ model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=
 
 # model.Demand.pprint()
 
-#at time t, a pilot should ocupy one and only one position
+#at time t, a pilot should occupy one and only one position
 #checked
 def pilot_pos_rule(model, pilot, t):
 	lhs = pe.summation(model.Y, index = [(p, r, f, b, t) for (p, r, f, b) in variable_set if p == pilot])
@@ -229,7 +232,8 @@ def min_vacation_rule(model, p, t):
 	lhs = 0
 	for i in range(13):
 		lhs += model.V[p,t+i]
-	return lhs >= 0
+	lhs += model.VP[p,t]
+	return lhs >= 1
 model.Vacation = pe.Constraint(model.pilots*model.quarterstart, rule = min_vacation_rule)
 
 ###OBJ###
@@ -241,8 +245,10 @@ model.total_base_trans_cost = pe.summation(model.base_transition_cost, model.Y, 
 model.total_trans_cost = model.total_fleet_trans_cost + model.total_base_trans_cost
 ###Shortages:
 model.total_shortage_cost = pe.summation(model.short_cost, model.S)
+###Vacation Penalty:
+model.total_vacation_penalty = pe.summation(model.vacation_penalty, model.VP)
 
-model.OBJ = pe.Objective(expr = model.total_shortage_cost + model.total_trans_cost + model.total_normal_cost, sense=pe.minimize)
+model.OBJ = pe.Objective(expr = model.total_shortage_cost + model.total_trans_cost + model.total_normal_cost + model.total_vacation_penalty, sense=pe.minimize)
 solver = pyomo.opt.SolverFactory('cplex')
 
 
@@ -279,16 +285,16 @@ for p in model.trainer_pilots:
 print "\nTotal number of pilot applies for fleet change is " + str(len(model.fleet_pilots))
 for p in model.fleet_pilots:
 	for t in model.timestart:
-		for b in model.base:
-			if model.Trainee[p, b, t].value == 1 :
-				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)			
+ 		for b in model.base:
+ 			if model.Trainee[p, b, t].value == 1 :
+ 				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)
 # record the transition in each week
-
 
 
 print '\nTotal cost = ', model.OBJ()
 print 'Shortage cost is = ', model.total_shortage_cost()
 print 'Transition cost is = ', model.total_trans_cost()
 print 'Normal Operation cost is = ', model.total_normal_cost()
+print 'Vacation Penalty is = ', model.total_vacation_penalty()
 #instance.solutions.load_from(results)
 #model.solutions.load_from(results)
