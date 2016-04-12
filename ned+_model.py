@@ -28,6 +28,7 @@ def get_all_pilots():
 
 ####trainer Pilots
 trainers = set(crew_df[(crew_df.Instructor == "TR3233_1")]['Crew_ID'])
+
 #### Seniority set[1,2,3,4]
 se_1 = set(crew_df[(crew_df.Seniority == 1)]['Crew_ID'])
 se_2 = set(crew_df[(crew_df.Seniority == 2)]['Crew_ID'])
@@ -132,7 +133,7 @@ model.T = pe.Var(model.trainer_pilots*model.base*model.time, domain=pe.Binary)
 model.Trainee = pe.Var(model.fleet_pilots*model.base*model.time, domain=pe.Binary)
 model.V = pe.Var(model.pilots*model.time, domain=pe.Binary)
 model.VP = pe.Var(model.pilots*model.quarterstart, domain=pe.NonNegativeIntegers)
-model.Vposition = pe.Var(model.pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
+model.Vposition = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.VS = pe.Var(model.pilots*model.time, domain = pe.NonNegativeIntegers)
 
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 70000)
@@ -144,7 +145,7 @@ model.seniority_reward = pe.Param(model.pilots*model.time, initialize = 50)
 
 #demand rule
 #TODO: need to figure out vacation, trainer cases.
-def demand_rule(model, r, f, b, t):
+def demand_rule(model,r,f,b,t):
 	curr_fixed = fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'].values
 	rhs = len(curr_fixed)
 	for p in curr_fixed:
@@ -238,6 +239,13 @@ def seniority_rule(model,p,t):
 	return lhs == 0
 model.seniority = pe.Constraint(model.pilots*model.time, rule = seniority_rule)
 
+### if the pilot p is not at position [b,f,r]at week t, even if he is on vacation, then Vposition[p,b,f,r,t] = 0
+def vacation_position_rule(model,p,r,f,b,t):
+	lhs = 0
+	lhs = model.V[p,t] + model.Y[p,r,f,b,t] - 1 - model.Vposition[p,r,f,b,t]
+	return lhs <= 0
+model.Vacation_position = pe.Constraint(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, rule = vacation_position_rule)
+
 # def trainer_location_rule(model, p, r, f, b, t):
 # 	if p in model.trainer_pilots:
 # 		return model.T[p, b, t] <= model.Y[p,r,f,b,t]
@@ -326,14 +334,12 @@ for p in model.fleet_pilots:
  				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)
 # record the transition in each week
 
-for p in model.pilots:
-	for t in model.time:
-		print model.VS[p,t].value
 
 print '\nTotal cost = ', model.OBJ()
 print 'Shortage cost is = ', model.total_shortage_cost()
 print 'Transition cost is = ', model.total_trans_cost()
 print 'Normal Operation cost is = ', model.total_normal_cost()
 print 'Vacation Penalty is = ', model.total_vacation_penalty()
+print 'Seniority Reward is =', model.total_seniority_reward()
 #instance.solutions.load_from(results)
 #model.solutions.load_from(results)
