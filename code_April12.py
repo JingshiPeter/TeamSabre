@@ -7,13 +7,10 @@ import cplex
 import logging
 
 #DEFINE GLOBAL NAMES HERE
-print "checking the correctness"
-CREWDATA_CSV = 'SampleData_Crew.csv'
-DEMANDDATA_CSV = 'SampleData_Demand.csv'
-VACATIONDATA_CSV = 'SampleData_Vacation.csv'
+CREWDATA_CSV = 'CrewData.csv'
+DEMANDDATA_CSV = 'DemandData.csv'
+VACATIONDATA_CSV = 'VacationData.csv'
 
-
-print "Loading data"
 crew_df = pandas.read_csv(CREWDATA_CSV)
 demand_df = pandas.read_csv(DEMANDDATA_CSV)
 vacation_df = pandas.read_csv(VACATIONDATA_CSV)
@@ -107,6 +104,7 @@ for pilot in nonfixed_df['Crew_ID'].values:
                 		to_set.append((pilot,rank,fleet,base))
 
 model.nonfix_pilots = pe.Set(initialize = nonfixed_df['Crew_ID'].values)
+model.fix_pilots = model.pilots - model.nonfix_pilots
 print "Number of nonfix_pilots is " + str(len(nonfixed_df['Crew_ID'].values))
 model.trainer_pilots = pe.Set(initialize = trainers)
 model.rank_pilots = pe.Set(initialize = rank_change)
@@ -146,6 +144,7 @@ model.V = pe.Var(model.pilots*model.time, domain=pe.Binary)
 model.VP = pe.Var(model.pilots*model.quarterstart, domain=pe.NonNegativeIntegers)
 #only nonfix pilots can take vacation or training?
 model.Vposition = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
+model.Vfix_position = pe.Var(model.fix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.Tposition = pe.Var(model.trainer_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.Trainee_po = pe.Var(model.fleet_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.VS = pe.Var(model.pilots*model.time, domain = pe.NonNegativeIntegers)
@@ -191,7 +190,7 @@ model.vacation_constraint2 = pe.Constraint(model.fleet_pilots*model.base*model.t
 #include fixed
 def training_rule(model,p,r,f,b,t):
     return model.Tposition[p,r,f,b,t] >= model.T[p,b,t] + model.Yall[p,r,f,b,t]-1
-model.training_constraint = pe.Constraint(model.trainer_pilots*model.rank*model.fleet*model.base*model.time)
+model.training_constraint = pe.Constraint(model.trainer_pilots*model.rank*model.fleet*model.base*model.time,rule = training_rule)
 #non-fixed only
 #def training_rule(model,p,r,f,b,t):
 #    return model.Tposition[p,r,f,b,t] >= model.T[p,b,t] + model.Y[p,r,f,b,t]-1
@@ -203,14 +202,14 @@ def demand_rule(model,r,f,b,t):
     vp=pe.summation(model.Vposition, index = [(p, r, f, b, t) for p in model.nonfix_pilots])
     tp=pe.summation(model.Tposition, index = [(p, r, f, b, t) for p in model.trainer_pilots])
     traineep= pe.summation(model.Trainee_po, index = [(p, r, f, b, t) for p in model.fleet_pilots])
+    vfixp= pe.summation(model.Vfix_position, index = [(p, r, f, b, t) for p in model.fix_pilots])
     curr_fixed = fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'].values
     pilot = len(curr_fixed)
     nonfix_pilot = pe.summation(model.Y, index = [(p, r, f, b, t) for p in model.nonfix_pilots])
-    rhs = pilot + nonfix_pilot - vp - tp - traineep + model.shortage[r,f,b,t] - model.surplus[r,f,b,t]
+    rhs = pilot + nonfix_pilot - vp - tp - vfixp - traineep + model.shortage[r,f,b,t] - model.surplus[r,f,b,t]
     demand = get_demand(r,f,b,t)
     return rhs == demand 
 model.demand_constraint = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule = demand_rule)
-
 '''
 # demand rule
 #TODO: need to figure out vacation, trainer cases.
@@ -315,6 +314,11 @@ def vacation_position_rule(model,p,r,f,b,t):
 	lhs = model.V[p,t] + model.Y[p,r,f,b,t] - 1 - model.Vposition[p,r,f,b,t]
 	return lhs <= 0
 model.Vacation_position = pe.Constraint(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, rule = vacation_position_rule)
+def vacation_position_rule2(model,p,r,f,b,t):
+	lhs = 0
+	lhs = model.V[p,t] + model.Yall[p,r,f,b,t] - 1 - model.Vfix_position[p,r,f,b,t]
+	return lhs <= 0
+model.Vacation_position2 = pe.Constraint(model.fix_pilots*model.rank*model.fleet*model.base*model.time, rule = vacation_position_rule2)
 
 # def trainer_location_rule(model, p, r, f, b, t):
 # 	if p in model.trainer_pilots:
@@ -402,19 +406,8 @@ for p in model.fleet_pilots:
  		for b in model.base:
  			if model.Trainee[p, b, t].value == 1 :
  				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)
- 				
-# Shortage for plots
-
-for b in model.base:
-        for f in model.fleet:
-                for r in model.rank:
-                        for t in model.time:
-                                if model.shortage[r,f,b,t].value > 0:
-                                       
-                                        print "There are "+str(model.shortage[r,f,b,t].value)+" for position " + str(f) + str(r) + " is shortage at " + str(t)+" at base "+ str(b)
-
 # record the transition in each week
-print "Generating solutions"
+
 
 print '\nTotal cost = ', model.OBJ()
 print 'Shortage cost is = ', model.total_shortage_cost()
