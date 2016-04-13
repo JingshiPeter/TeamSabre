@@ -351,6 +351,19 @@ def trainee_trainer_rule(model, b, t):
 	return total_trainer == total_trainee
 model.trainee_trainer = pe.Constraint(model.base*model.time, rule = trainee_trainer_rule)
 
+###Yall and Y binding rule (for non-fix pilot part)
+def yall_y_binding_rule(model, p, r, f, b, t):
+	return model.Yall[p,r,f,b,t] == model.Y[p,r,f,b,t]
+model.yall_y_binding = pe.Constraint(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, rule = yall_y_binding_rule)
+
+###Yall setting rule(for fix-pilot part)
+def yall_setting_rule(model, p, r, f, b, t):
+	df_new = fixed_df.set_index(['Crew_ID','Rank','Cur_Fleet','Current_Base'])
+	if (p, r, f, b) in df_new.index:
+		return model.Yall[p,r,f,b,t] == 1
+	else:
+		return model.Yall[p,r,f,b,t] == 0
+model.yall_setting = pe.Constraint(model.fix_pilots*model.rank*model.fleet*model.base*model.time, rule = yall_setting_rule)
 
 
 ###OBJ###
