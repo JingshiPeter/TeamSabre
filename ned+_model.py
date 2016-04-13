@@ -326,7 +326,7 @@ for pilott in list_nfPilots:
 
 
 
-=======
+#=======
 print "\nTotal number of non-fix pilots is " + str(len(model.nonfix_pilots))
 for (p, r, f, b) in model.from_pos:
 	for t in model.timestart:
