@@ -11,6 +11,8 @@ CREWDATA_CSV = 'CrewData.csv'
 DEMANDDATA_CSV = 'DemandData.csv'
 VACATIONDATA_CSV = 'VacationData.csv'
 
+
+print "Loading data"
 crew_df = pandas.read_csv(CREWDATA_CSV)
 demand_df = pandas.read_csv(DEMANDDATA_CSV)
 vacation_df = pandas.read_csv(VACATIONDATA_CSV)
@@ -411,7 +413,7 @@ for b in model.base:
                                         print "There are "+str(model.shortage[r,f,b,t].value)+" for position " + str(f) + str(r) + " is shortage at " + str(t)+" at base "+ str(b)
 
 # record the transition in each week
-
+print "Generating solutions"
 
 print '\nTotal cost = ', model.OBJ()
 print 'Shortage cost is = ', model.total_shortage_cost()
