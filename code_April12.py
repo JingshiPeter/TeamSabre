@@ -144,6 +144,7 @@ model.VP = pe.Var(model.pilots*model.quarterstart, domain=pe.NonNegativeIntegers
 #only nonfix pilots can take vacation or training?
 model.Vposition = pe.Var(model.nonfix_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.Tposition = pe.Var(model.trainer_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
+model.Trainee_po = pe.Var(model.fleet_pilots*model.rank*model.fleet*model.base*model.time, domain=pe.Binary)
 model.VS = pe.Var(model.pilots*model.time, domain = pe.NonNegativeIntegers)
 
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 70000)
@@ -192,13 +193,17 @@ model.training_constraint = pe.Constraint(model.trainer_pilots*model.rank*model.
 #def training_rule(model,p,r,f,b,t):
 #    return model.Tposition[p,r,f,b,t] >= model.T[p,b,t] + model.Y[p,r,f,b,t]-1
 #model.training_constraint = pe.Constraint(model.trainer_nonfix_pilots*model.rank*model.fleet*model.base*model.time)
+def trainee_rule2(model,p,r,f,b,t):
+   return model.Trainee_po[p,r,f,b,t] >= model.Trainee[p,b,t] +model.Y[p,r,f,b,t] -1
+model.trainee_constraint2 = pe.Constraint(model.fleet_pilots*model.rank*model.fleet*model.base*model.time, rule = trainee_rule2)
 def demand_rule(model,r,f,b,t):
     vp=pe.summation(model.Vposition, index = [(p, r, f, b, t) for p in model.nonfix_pilots])
     tp=pe.summation(model.Tposition, index = [(p, r, f, b, t) for p in model.trainer_pilots])
+    traineep= pe.summation(model.Trainee_po, index = [(p, r, f, b, t) for p in model.fleet_pilots])
     curr_fixed = fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'].values
     pilot = len(curr_fixed)
     nonfix_pilot = pe.summation(model.Y, index = [(p, r, f, b, t) for p in model.nonfix_pilots])
-    rhs = pilot + nonfix_pilot - vp - tp + model.shortage[r,f,b,t] - model.surplus[r,f,b,t]
+    rhs = pilot + nonfix_pilot - vp - tp - traineep + model.shortage[r,f,b,t] - model.surplus[r,f,b,t]
     demand = get_demand(r,f,b,t)
     return rhs == demand 
 model.demand_constraint = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule = demand_rule)
