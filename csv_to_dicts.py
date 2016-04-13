@@ -7,6 +7,8 @@ DEMANDDATA_CSV = 'DemandData.csv'
 crew_df = pandas.read_csv(CREWDATA_CSV)
 demand_df = pandas.read_csv(DEMANDDATA_CSV)
 
+print crew_df.columns
+
 def get_base_dic():
 	###finished
 	# return a base dictionary
@@ -15,6 +17,7 @@ def get_base_dic():
 
 	# 'b1' : {'900488', '900421'},
 	# 'b2' : {'900201', '900424'}
+<<<<<<< Updated upstream
     
     #  }
 	
@@ -27,6 +30,14 @@ def get_base_dic():
 	    "B2" : set(b2_ids),
 	    }
 	return base_dic
+=======
+	
+	for index,row in Crew_df.iterrows():
+            print row['Crew_ID']
+            print row['Current_base']
+
+	# }
+>>>>>>> Stashed changes
 
 def get_rank_dic():
 	###rank
@@ -48,8 +59,12 @@ def get_rank_dic():
 	    }
 	return rank_dic
 
+<<<<<<< Updated upstream
 def get_fleet_dic():
 	###finished
+=======
+#def get_fleet_dic():
+>>>>>>> Stashed changes
 	# return a fleet dictionary
 	# example :
 	# fleets = {
@@ -57,6 +72,7 @@ def get_fleet_dic():
 	# 'a320' : {'900488', '900424'}
 
 	# }
+<<<<<<< Updated upstream
 	A320_ids = crew_df[crew_df.Cur_Fleet == "A320"]['Crew_ID']
 	A330_ids = crew_df[crew_df.Cur_Fleet == "A330"]['Crew_ID']
 	print "number of pilots for A320 is " + str(len(A320_ids))
@@ -168,3 +184,17 @@ fleet_dic = get_fleet_dic()
 def get_position(base, fleet, rank):
 	# return fix group pilot ids whose position is input
 	return set(base_dic[base] and fleet_dic[fleet] and rank_dic[rank])
+=======
+#def get_from_fleet_dic():
+
+#def get_to_fleet_dic():
+
+#def get_from_rank_dic():
+
+#def get_to_rank_dic():
+
+#def get_from_base_dic():
+
+#def get_to_base_dic():
+	
+>>>>>>> Stashed changes
