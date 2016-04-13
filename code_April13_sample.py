@@ -7,10 +7,9 @@ import cplex
 import logging
 
 #DEFINE GLOBAL NAMES HERE
-<<<<<<< HEAD
+
 print "checking the correctness_!"
-=======
->>>>>>> origin/master
+
 CREWDATA_CSV = 'SampleData_Crew.csv'
 DEMANDDATA_CSV = 'SampleData_Demand.csv'
 VACATIONDATA_CSV = 'SampleData_Vacation.csv'
