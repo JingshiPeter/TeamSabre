@@ -198,7 +198,7 @@ model.training_constraint = pe.Constraint(model.trainer_pilots*model.rank*model.
 #model.training_constraint = pe.Constraint(model.trainer_nonfix_pilots*model.rank*model.fleet*model.base*model.time)
 def trainee_rule2(model,p,r,f,b,t):
    return model.Trainee_po[p,r,f,b,t] >= model.Trainee[p,b,t] +model.Y[p,r,f,b,t] -1
-model.trainee_constraint2 = pe.Constraint(model.fleet_pilots*model.rank*model.fleet*model.base*model.time, rule = trainee_rule2)
+model.trainee_constraint2 = pe.Constraint(model.fleet_pilots*model.rank*model.fleet*model.base*model.time,rule = trainee_rule2)
 def demand_rule(model,r,f,b,t):
     vp=pe.summation(model.Vposition, index = [(p, r, f, b, t) for p in model.nonfix_pilots])
     tp=pe.summation(model.Tposition, index = [(p, r, f, b, t) for p in model.trainer_pilots])
