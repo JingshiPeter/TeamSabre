@@ -223,13 +223,31 @@ def trainee_rule2(model,p,r,f,b,t):
 		return pe.Constraint.Skip
 model.trainee_constraint2 = pe.Constraint(model.fleet_pilots*model.rank*model.fleet*model.base*model.time, rule = trainee_rule2)
 def demand_rule(model,r,f,b,t):
-	vp=pe.summation(model.Vposition, index = [(p, r, f, b, t) for (p, r, f, b) in model.nonfix_var_set])
-	tp=pe.summation(model.Tposition, index = [(p, r, f, b, t) for p in model.trainer_pilots])
-	traineep= pe.summation(model.Trainee_po, index = [(p, r, f, b, t) for p in model.fleet_pilots])
-	vfixp= pe.summation(model.Vfix_position, index = [(p, r, f, b, t) for (p, r, f, b) in model.fix_var_set])
+	vp=0
+	for p in model.nonfix_pilots :
+		if (p, r, f, b) in model.nonfix_var_set:
+			vp +=model.Vposition[p, r, f, b, t]
+
+	tp=0
+	for p in model.trainer_pilots :
+		if (p, r, f, b) in model.all_var_set:
+			vp +=model.Tposition[p, r, f, b, t]
+
+	traineep=0
+	for p in model.fleet_pilots :
+		if (p, r, f, b) in model.nonfix_var_set:
+			vp +=model.Trainee_po[p, r, f, b, t]
+	vfixp=0
+	for p in model.fix_pilots :
+		if (p, r, f, b) in model.fix_var_set:
+			vp +=model.Vfix_position[p, r, f, b, t]
+
 	curr_fixed = fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'].values
 	pilot = len(curr_fixed)
-	nonfix_pilot = pe.summation(model.Y, index = [(p, r, f, b, t) for (p, r, f, b) in model.nonfix_var_set])
+	nonfix_pilot = 0
+	for p in model.nonfix_pilots :
+		if (p, r, f, b) in model.nonfix_var_set:
+			nonfix_pilot +=model.Y[p, r, f, b, t]
 	rhs = pilot + nonfix_pilot - vp - tp - vfixp - traineep + model.shortage[r,f,b,t] - model.surplus[r,f,b,t]
 	demand = get_demand(r,f,b,t)
 	return rhs == demand 
@@ -450,6 +468,30 @@ for p in model.fleet_pilots:
  			if model.Trainee[p, b, t].value == 1 :
  				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)
 # record the transition in each week
+for (p, r, f, b) in model.fix_var_set:
+	for t in model.time:
+		if(model.Vfix_position[p, r, f, b, t].value == 1):
+			print p +" "+str(t) + " Vacation"
+		if(p in model.trainer_pilots):
+			if(model.T[p,b,t].value == 1):
+				print p +" "+str(t) + " Giving Training"
+
+for (p, r, f, b) in model.nonfix_var_set:
+	for t in model.time:
+		if(model.Vposition[p, r, f, b, t].value == 1):
+			print p +" "+str(t) + " Vacation"
+		if(p in model.trainer_pilots):
+			if(model.T[p,b,t].value == 1):
+				print p +" "+str(t) + " Giving Training"
+		if(p in model.fleet_pilots):
+			if(model.Trainee[p,b,t].value == 1):
+				print p +" "+str(t) + " Receive Training"
+		if((p in model.base_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
+			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
+				print p +" "+str(t) + " Base change from " + str(b)
+		if((p in model.rank_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
+			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
+				print p +" "+str(t) + " Rank change from " + str(r)
 
 
 print '\nTotal cost = ', model.OBJ()
