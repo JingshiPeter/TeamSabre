@@ -399,6 +399,17 @@ for p in model.fleet_pilots:
  		for b in model.base:
  			if model.Trainee[p, b, t].value == 1 :
  				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)
+ 				
+# Shortage for plots
+
+for b in model.base:
+        for f in model.fleet:
+                for r in model.rank:
+                        for t in model.time:
+                                if model.shortage[r,f,b,t].value > 0:
+                                       
+                                        print "There are "+str(model.shortage[r,f,b,t].value)+" for position " + str(f) + str(r) + " is shortage at " + str(t)+" at base "+ str(b)
+
 # record the transition in each week
 
 
