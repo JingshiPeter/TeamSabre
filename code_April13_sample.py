@@ -11,9 +11,9 @@ import logging
 print "checking the correctness_!"
 =======
 >>>>>>> origin/master
-CREWDATA_CSV = 'CrewData.csv'
-DEMANDDATA_CSV = 'DemandData.csv'
-VACATIONDATA_CSV = 'VacationData.csv'
+CREWDATA_CSV = 'SampleData_Crew.csv'
+DEMANDDATA_CSV = 'SampleData_Demand.csv'
+VACATIONDATA_CSV = 'SampleData_Vacation.csv'
 
 crew_df = pandas.read_csv(CREWDATA_CSV)
 demand_df = pandas.read_csv(DEMANDDATA_CSV)
