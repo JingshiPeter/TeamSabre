@@ -304,8 +304,7 @@ if (results.solver.termination_condition != pyomo.opt.TerminationCondition.optim
 model.solutions.load_from(results)
 #model.load(results)
 
-<<<<<<< HEAD
-print 'Daeun, Please start coding below'
+
 
 
 print 'Mridula at time t, pilot P changed position: result visualzation'
