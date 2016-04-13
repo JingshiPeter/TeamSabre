@@ -8,9 +8,9 @@ import logging
 
 #DEFINE GLOBAL NAMES HERE
 print "checking the correctness_!"
-CREWDATA_CSV = 'SampleData_Crew.csv'
-DEMANDDATA_CSV = 'SampleData_Demand.csv'
-VACATIONDATA_CSV = 'SampleData_Vacation.csv'
+CREWDATA_CSV = 'CrewData.csv'
+DEMANDDATA_CSV = 'DemandData.csv'
+VACATIONDATA_CSV = 'VacationData.csv'
 
 
 print "Loading data"
