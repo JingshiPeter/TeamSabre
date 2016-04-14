@@ -697,13 +697,10 @@ model.vacation_constraint2 = pe.Constraint(model.fleet_pilots*model.base*model.t
 #include fixed
 def training_rule(model,p,r,f,b,t):
     return model.Tposition[p,r,f,b,t] >= model.T[p,b,t] + model.Yall[p,r,f,b,t]-1
-<<<<<<< HEAD
 model.training_constraint = pe.Constraint(model.trainer_pilots*model.rank*model.fleet*model.base*model.time,rule=training_rule)
-=======
-model.training_constraint = pe.Constraint(model.trainer_pilots*model.rank*model.fleet*model.base*model.time,rule = training_rule)
->>>>>>> origin/master
+
 #non-fixed only
-#def training_rule(model,p,r,f,b,t):
+#def training_rule(model,p,r,f,b,t)
 #    return model.Tposition[p,r,f,b,t] >= model.T[p,b,t] + model.Y[p,r,f,b,t]-1
 #model.training_constraint = pe.Constraint(model.trainer_nonfix_pilots*model.rank*model.fleet*model.base*model.time)
 def trainee_rule2(model,p,r,f,b,t):
