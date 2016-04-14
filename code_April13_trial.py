@@ -1,5 +1,6 @@
 import pandas
-import pyomo.optimport pandas
+import pyomo.opt 
+import pandas
 import pyomo.opt
 import pyomo.environ as pe
 import scipy
