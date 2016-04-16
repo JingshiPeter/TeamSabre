@@ -264,69 +264,6 @@ def demand_rule(model,r,f,b,t):
 	demand = get_demand(r,f,b,t)
 	return rhs == demand 
 model.demand_constraint = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule = demand_rule)
-'''
-# demand rule
-#TODO: need to figure out vacation, trainer cases.
-
-def demand_rule(model,r,f,b,t):
-	curr_fixed = fixed_df[(fixed_df.Rank==r)&(fixed_df.Cur_Fleet==f)&(fixed_df.Current_Base==b)]['Crew_ID'].values
-	rhs = len(curr_fixed)
-	for p in curr_fixed:
-		if(p in model.trainer_pilots):
-			rhs -= model.T[p, b ,t]
-	for p in curr_fixed:
-		# if p is in vacation
-		rhs -= model.V[p,t]
-
-	for p in toPos[(toPos.RANK==r)&(toPos.FLEET==f)&(toPos.BASE==b)]['ID'].values:
-		rhs += model.Y[p,r,f,b,t]
-		# if p come to the position by a fleet change, it takes 5 weeks training
-		if(p in fleet_change and t >= 5) :
-			rhs = rhs - 1 + model.Y[p,r,f,b,t-5]
-		elif(p in fleet_change and t < 5) :
-			rhs = rhs - model.Y[p,r,f,b,t]
-
-	for p in fromPos[(fromPos.RANK==r)&(fromPos.FLEET==f)&(fromPos.BASE==b)]['ID'].values:
-		rhs = rhs - model.Y[p,r,f,b,t]
-
-	rhs = rhs + model.shortage[r,f,b,t] - model.surplus[r,f,b,t]
-	return rhs == get_demand(r,f,b,t)
-
-model.Demand = pe.Constraint(model.rank*model.fleet*model.base*model.time, rule=demand_rule)
-'''
-# model.Demand.pprint()
-
-#at time t, a pilot should occupy one and only one position
-#checked
-def pilot_pos_rule(model, p, t):
-	summ=0
-	for r in model.rank:
-		for f in model.fleet:
-			for b in model.base:
-				if (p,r,f,b) in model.nonfix_var_set:
-					summ += model.Y[p, r, f, b, t]
-	lhs = summ
-	return lhs == 1
-model.PositionConst = pe.Constraint(model.nonfix_pilots*model.time, rule = pilot_pos_rule)
-# model.PositionConst.pprint()
-
-# all nonfix_pilots should start being at their "from" position
-def pilot_transit_rule0(model, p, r, f, b):
-	return model.Y[p,r,f,b,0] == 1
-model.Transition0 = pe.Constraint(model.from_pos, rule = pilot_transit_rule0)
-# model.Transition0.pprint()
-
-# all nonfix_pilots should transit only once--"from" postion should be decreasing
-def pilot_transit_rule1(model, p, r, f, b, t):
-	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] >= 0
-model.Transition1 = pe.Constraint(model.from_pos*model.timestart, rule = pilot_transit_rule1)
-# model.Transition1.pprint()
-
-# "to" postion should be increasing
-def pilot_transit_rule2(model, p, r, f, b, t):
-	return model.Y[p,r,f,b,t] - model.Y[p,r,f,b,t+1] <= 0
-model.Transition2 = pe.Constraint(model.to_pos*model.timestart, rule = pilot_transit_rule2)
-# model.Transition2.pprint()
 
 
 def get_slot(t):
@@ -380,19 +317,6 @@ def vacation_position_rule2(model,p,r,f,b,t):
 	return lhs <= 0
 model.Vacation_position2 = pe.Constraint(model.fix_var_set*model.time, rule = vacation_position_rule2)
 
-# def trainer_location_rule(model, p, r, f, b, t):
-# 	if p in model.trainer_pilots:
-# 		return model.T[p, b, t] <= model.Y[p,r,f,b,t]
-# 	else:
-# 		return pe.Constraint.Skip
-# model.trainer_location = pe.Constraint(model.all_pos*model.time, rule=trainer_location_rule)
-
-# def trainee_location_rule(model, p, r, f, b, t):
-# 	if p in model.fleet_pilots:
-# 		return model.Trainee[p, b, t] <= model.Y[p,r,f,b,t]
-# 	else:
-# 		return pe.Constraint.Skip
-# model.trainee_location = pe.Constraint(model.all_pos*model.time, rule=trainee_location_rule)
 
 def trainee_var_binding_rule(model, p, r, f, b, t):
 	if(p in fleet_change):
