@@ -514,3 +514,4 @@ print 'Vacation Penalty is = ', model.total_vacation_penalty()
 print 'Seniority Reward is =', model.total_seniority_reward()
 #instance.solutions.load_from(results)
 #model.solutions.load_from(results)
+print "complete"
