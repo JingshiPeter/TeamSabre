@@ -131,7 +131,8 @@ model.nonfix_pilots = pe.Set(initialize = nonfixed_df['Crew_ID'].values)
 model.nonfix_var_set = pe.Set(initialize = nonfix_var_set)
 model.fix_var_set = pe.Set(initialize = fix_var_set)
 model.all_var_set = pe.Set(initialize = all_var_set)
-model.fix_pilots = model.pilots - model.nonfix_pilots
+# model.fix_pilots = model.pilots - model.nonfix_pilots
+list_fix_pilots =[x for x in list(model.pilots.value) if x not in list(model.nonfix_pilots.value)]
 print "Number of nonfix_pilots is " + str(len(nonfixed_df['Crew_ID'].values))
 model.trainer_pilots = pe.Set(initialize = trainers)
 model.rank_pilots = pe.Set(initialize = rank_change)
@@ -152,7 +153,7 @@ model.se_2 = pe.Set(initialize = se_2)
 model.se_3 = pe.Set(initialize = se_3)
 model.se_4 = pe.Set(initialize = se_4)
 
-model.fix_pilots = model.pilots - model.nonfix_pilots
+#model.fix_pilots = model.pilots - model.nonfix_pilots
 model.rank = pe.Set(initialize=['CPT','FO'])
 model.fleet = pe.Set(initialize=['A330','A320'])
 model.base = pe.Set(initialize=[1,2])
@@ -185,13 +186,6 @@ model.seniority_reward = pe.Param(model.pilots*model.time, initialize = 50)
 
 #new constraints 1-5
 #non-fixed only
-#def trainer_rule(model,p,b,t):
-#	rhs = 0
-#	for f in model.fleet:
-#		for r in model.rank:
-#			rhs=rhs+model.Y[p,r,f,b,t]
-#	return model.T[p,b,t] <= rhs
-#model.trainer_constraint = pe.Constraint(model.trainer_nonfix_pilots*model.base*model.time,rule=trainer_rule)
 
 #include fixed
 def trainer_rule(model,p,b,t):
@@ -250,7 +244,8 @@ def demand_rule(model,r,f,b,t):
 		if (p, r, f, b) in model.nonfix_var_set:
 			vp +=model.Trainee_po[p, r, f, b, t]
 	vfixp=0
-	for p in model.fix_pilots :
+	# changed model.fix_pilots to list_fix_pilots
+	for p in list_fix_pilots:
 		if (p, r, f, b) in model.fix_var_set:
 			vp +=model.Vfix_position[p, r, f, b, t]
 
