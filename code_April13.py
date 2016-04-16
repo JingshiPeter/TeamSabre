@@ -467,6 +467,8 @@ for p in model.fleet_pilots:
  		for b in model.base:
  			if model.Trainee[p, b, t].value == 1 :
  				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)
+ 				
+ 				
 # record the transition in each week
 for (p, r, f, b) in model.fix_var_set:
 	for t in model.time:
