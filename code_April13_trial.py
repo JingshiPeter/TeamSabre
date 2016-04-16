@@ -159,7 +159,16 @@ model.fleet = pe.Set(initialize=['A330','A320'])
 model.base = pe.Set(initialize=[1,2])
 model.time = pe.Set(initialize=range(len(demand_df)))
 model.timestart = pe.Set(initialize=range(len(demand_df)-1))
-model.quarterstart = pe.Set(initialize = [0,13])
+if len(demand_df) <= 12:
+	model.quarterstart = pe.Set(initialize = [0])
+elif len(demand_df) >12 & len(demand_df) <= 26:
+	model.quarterstart = pe.Set(initialize = [0,13])
+elif len(demand_df) >26 & len(demand_df) <= 40:
+	model.quarterstart = pe.Set(initialize = [0,13,27])
+
+
+
+# model.quarterstart = pe.Set(initialize = [0,13])
 
 model.Y = pe.Var(model.nonfix_var_set*model.time, domain=pe.Binary)
 # this variable contained all pilots
