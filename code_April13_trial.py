@@ -10,30 +10,38 @@ import logging
 CREWDATA_CSV = 'SampleData_Crew.csv'
 DEMANDDATA_CSV = 'SampleData_Demand.csv'
 VACATIONDATA_CSV = 'SampleData_Vacation.csv'
-
+print "loading data"
 crew_df = pandas.read_csv(CREWDATA_CSV)
 demand_df = pandas.read_csv(DEMANDDATA_CSV)
 vacation_df = pandas.read_csv(VACATIONDATA_CSV)
 
+print "defining a function to extract demand data"
 def get_demand(rank, fleet, base, week):
 	# example: base = "B1", fleet = "A330", rank = "FO", week = 0
 	# return the demand at B1, A330, FO of week 0
 	return demand_df['B'+ str(base) + '_' + fleet[1:] + rank][week]
-
+print "defining a function to retun the set of pilots who request for a change"
 def get_nonfix_pilots():
 	return set(crew_df[(crew_df.Bid_BaseChange.notnull()) | (crew_df.Bid_FleetChange.notnull())| (crew_df.Bid_RankChange.notnull())]['Crew_ID'])
-
+print "Defining a function to extract the set of all pilots"
 def get_all_pilots():
 	return set(crew_df[crew_df.Rank != "SIM_INS"]['Crew_ID'])
 
 ####trainer Pilots
 trainers = set(crew_df[(crew_df.Instructor == "TR3233_1")]['Crew_ID'])
+list_trainers = list(trainers)
 
 #### Seniority set[1,2,3,4]
+print "Extracting the set of seniorities"
 se_1 = set(crew_df[(crew_df.Seniority == 1)]['Crew_ID'])
+l_se_1 = list(se_1)
 se_2 = set(crew_df[(crew_df.Seniority == 2)]['Crew_ID'])
+l_se_2 = list(se_2)
 se_3 = set(crew_df[(crew_df.Seniority == 3)]['Crew_ID'])
+l_se_3 = list(se_3)
 se_4 = set(crew_df[(crew_df.Seniority == 4)]['Crew_ID'])
+l_se_4 = list(se_4)
+
 
 ####fixedPos
 def print_duplicate(a):
@@ -43,6 +51,7 @@ nonfixed_df = crew_df[(crew_df.Bid_BaseChange.notnull()) | (crew_df.Bid_FleetCha
 fixed_df = crew_df[(~crew_df.Bid_BaseChange.notnull()) & (~crew_df.Bid_FleetChange.notnull()) & (~crew_df.Bid_RankChange.notnull())]
 
 #### toPos
+print "Defining the destination of pilots"
 topos_list = []
 rank_change = set(crew_df[(crew_df.Bid_RankChange.notnull())]['Crew_ID'])
 fleet_change = set(crew_df[(crew_df.Bid_FleetChange.notnull())]['Crew_ID'])
@@ -65,11 +74,12 @@ for pilot in set(nonfixed_df['Crew_ID']):
 		cur.append(pilot_item.Cur_Fleet.values[0])
 		cur.append(pilot_item.Bid_BaseChange.values[0])
 	topos_list.append(cur)
-
+print "creating a pandas data frame from the list of to postions"
 toPos = pandas.DataFrame(topos_list)
 toPos.columns =['ID','RANK','FLEET','BASE']
 
 #### fromPos
+print "Defining the original state of pilots before transition"
 frompos_list = []
 for pilot in set(nonfixed_df['Crew_ID']):
 	cur = [pilot]
@@ -83,7 +93,7 @@ fromPos = pandas.DataFrame(frompos_list)
 fromPos.columns =['ID','RANK','FLEET','BASE']
 
 # ALL debuged before this point
-
+print "Defining model"
 model = pe.ConcreteModel()
 model.pilots = pe.Set(initialize=get_all_pilots())
 nonfix_var_set=[]
@@ -106,6 +116,7 @@ for pilot in nonfixed_df['Crew_ID'].values:
 					if in_to :
 						to_set.append((pilot,rank,fleet,base))
 
+print "debugged till here"
 df_fixnew = fixed_df.set_index(['Crew_ID','Rank','Cur_Fleet','Current_Base'])
 for pilot in fixed_df['Crew_ID'].values:
 		for fleet in ['A320','A330']:
