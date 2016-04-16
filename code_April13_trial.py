@@ -233,6 +233,7 @@ def trainee_rule2(model,p,r,f,b,t):
 	else:
 		return pe.Constraint.Skip
 model.trainee_constraint2 = pe.Constraint(model.fleet_pilots*model.rank*model.fleet*model.base*model.time, rule = trainee_rule2)
+print "no problem till here"
 def demand_rule(model,r,f,b,t):
 	vp=0
 	for p in model.nonfix_pilots :
