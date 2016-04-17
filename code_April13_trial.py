@@ -284,7 +284,9 @@ model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = max_vacation
 ### at least one vacation per quarter
 def min_vacation_rule(model, p, t):
 	lhs = 0
-	for i in range(13):
+	# change from range(13) to range(len(demand_df))
+	# See if the error is eleminated
+	for i in range(len(demand_df)):
 		lhs += model.V[p,t+i]
 	lhs += model.VP[p,t]
 	return lhs >= 1
