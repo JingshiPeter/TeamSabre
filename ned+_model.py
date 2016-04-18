@@ -357,7 +357,7 @@ for p in model.fleet_pilots:
 			if model.Trainee[p, b, t].value == 1 :
 				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)			
 >>>>>>> origin/master
-=======
+#=======
  		for b in model.base:
  			if model.Trainee[p, b, t].value == 1 :
  				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)

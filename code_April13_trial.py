@@ -7,12 +7,12 @@ import cplex
 import logging
 
 #DEFINE GLOBAL NAMES HERE
-# CREWDATA_CSV = 'SampleData_Crew.csv'
-# DEMANDDATA_CSV = 'SampleData_Demand.csv'
-# VACATIONDATA_CSV = 'SampleData_Vacation.csv'
-CREWDATA_CSV = 'CrewData.csv'
-DEMANDDATA_CSV = 'DemandData.csv'
-VACATIONDATA_CSV = 'VacationData.csv'
+CREWDATA_CSV = 'SampleData_Crew.csv'
+DEMANDDATA_CSV = 'SampleData_Demand.csv'
+VACATIONDATA_CSV = 'SampleData_Vacation.csv'
+#CREWDATA_CSV = 'CrewData.csv'
+#DEMANDDATA_CSV = 'DemandData.csv'
+#VACATIONDATA_CSV = 'VacationData.csv'
 print "loading data"
 crew_df = pandas.read_csv(CREWDATA_CSV)
 demand_df = pandas.read_csv(DEMANDDATA_CSV)
