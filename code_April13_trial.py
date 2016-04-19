@@ -366,8 +366,9 @@ model.yall_setting = pe.Constraint(model.fix_var_set*model.time, rule = yall_set
 ###Normal Operation:
 model.total_normal_cost = pe.summation(model.normal_cost, model.Y)
 ###Transitions:
-model.total_fleet_trans_cost = pe.summation(model.fleet_transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in model.to_pos if p in model.fleet_pilots ])
-model.total_base_trans_cost = pe.summation(model.base_transition_cost, model.Y, index = [(p, r, f, b, 25) for(p, r, f, b) in model.to_pos if p in model.base_pilots ])
+# changing (p, r, f, b, 25)'s to (p, r, f, b, )
+model.total_fleet_trans_cost = pe.summation(model.fleet_transition_cost, model.Y, index = [(p, r, f, b, len(demand_df)-1) for(p, r, f, b) in model.to_pos if p in model.fleet_pilots ])
+model.total_base_trans_cost = pe.summation(model.base_transition_cost, model.Y, index = [(p, r, f, b, len(demand_df)-1) for(p, r, f, b) in model.to_pos if p in model.base_pilots ])
 model.total_trans_cost = model.total_fleet_trans_cost + model.total_base_trans_cost
 ###Shortages:
 model.total_shortage_cost = pe.summation(model.short_cost, model.shortage)
