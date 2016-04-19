@@ -401,46 +401,46 @@ for (p, r, f, b) in model.from_pos:
 				print "This is a base change from " + str(b)
 				
 
-
+# changed p to str(p) in print command from here
 print "\nTotal number of TR3233_1 qualified trainers is " + str(len(model.trainer_pilots))
 for p in model.trainer_pilots:
 	for t in model.timestart:
 		for b in model.base:
 			if model.T[p, b, t].value == 1 :
-				print "trainer " + p + " is training at week " + str(t)	+ " at base " + str(b)
+				print "trainer " + str(p) + " is training at week " + str(t)	+ " at base " + str(b)
 
 
-print "\nTotal number of pilot applies for fleet change is " + str(len(model.fleet_pilots))
+print "\nTotal number of pilots that applied for fleet change is " + str(len(model.fleet_pilots))
 for p in model.fleet_pilots:
 	for t in model.timestart:
  		for b in model.base:
  			if model.Trainee[p, b, t].value == 1 :
- 				print "pilot " + p + " receives fleet training at week " + str(t) + " at base " + str(b)
+ 				print "Pilot " + str(p) + " receives fleet training at week " + str(t) + " at base " + str(b)
 # record the transition in each week
 for (p, r, f, b) in model.fix_var_set:
 	for t in model.time:
 		if(model.Vfix_position[p, r, f, b, t].value == 1):
-			print p +" "+str(t) + " Vacation"
+			print str(p) +" "+str(t) + " Vacation"
 		if(p in model.trainer_pilots):
 			if(model.T[p,b,t].value == 1):
-				print p +" "+str(t) + " Giving Training"
+				print str(p) +" "+str(t) + " Giving Training"
 
 for (p, r, f, b) in model.nonfix_var_set:
 	for t in model.time:
 		if(model.Vposition[p, r, f, b, t].value == 1):
-			print p +" "+str(t) + " Vacation"
+			print str(p) +" "+str(t) + " Vacation"
 		if(p in model.trainer_pilots):
 			if(model.T[p,b,t].value == 1):
-				print p +" "+str(t) + " Giving Training"
+				print str(p) +" "+str(t) + " Giving Training"
 		if(p in model.fleet_pilots):
 			if(model.Trainee[p,b,t].value == 1):
-				print p +" "+str(t) + " Receive Training"
+				print str(p) +" "+str(t) + " Receive Training"
 		if((p in model.base_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
 			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
-				print p +" "+str(t) + " Base change from " + str(b)
+				print str(p) +" "+str(t) + " Base change from " + str(b)
 		if((p in model.rank_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
 			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
-				print p +" "+str(t) + " Rank change from " + str(r)
+				print str(p) +" "+str(t) + " Rank change from " + str(r)
 
 
 print '\nTotal cost = ', model.OBJ()
