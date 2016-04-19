@@ -292,7 +292,7 @@ def min_vacation_rule(model, p, t):
 	# change from range(13) to range(len(demand_df))
 	# See if the error is eleminated
 	# in each quarter
-	for i in range(3):
+	for i in range(len(demand_df)):
 		lhs += model.V[p,t+i]
 	lhs += model.VP[p,t]
 	return lhs >= 1
