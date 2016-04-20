@@ -167,7 +167,7 @@ if len(demand_df) <= 12:
 elif len(demand_df) >12 & len(demand_df) <= 26:
 	model.quarterstart = pe.Set(initialize = [0,13])
 elif len(demand_df) >26 & len(demand_df) <= 40:
-	model.quarterstart = pe.Set(initialize = [0,13,27])
+	model.quarterstart = pe.Set(initialize = [0,13,26])
 
 
 
@@ -289,10 +289,10 @@ model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = max_vacation
 ## understand this part 
 def min_vacation_rule(model, p, t):
 	lhs = 0
-	# change from range(13) to range(len(demand_df))
+	# change from range(13) to range(len(demand_df)) to model.time
 	# See if the error is eleminated
 	# in each quarter
-	for i in range(len(demand_df)):
+	for i in model.time:
 		lhs += model.V[p,t+i]
 	lhs += model.VP[p,t]
 	return lhs >= 1
@@ -428,19 +428,19 @@ for (p, r, f, b) in model.fix_var_set:
 for (p, r, f, b) in model.nonfix_var_set:
 	for t in model.time:
 		if(model.Vposition[p, r, f, b, t].value == 1):
-			print str(p) +" "+str(t) + " Vacation"
+			print str(p) +" week_"+str(t) + " Vacation"
 		if(p in model.trainer_pilots):
 			if(model.T[p,b,t].value == 1):
-				print str(p) +" "+str(t) + " Giving Training"
+				print str(p) +" week_"+str(t) + " Giving Training"
 		if(p in model.fleet_pilots):
 			if(model.Trainee[p,b,t].value == 1):
-				print str(p) +" "+str(t) + " Receive Training"
+				print str(p) +" week_"+str(t) + " Receive Training"
 		if((p in model.base_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
 			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
-				print str(p) +" "+str(t) + " Base change from " + str(b)
+				print str(p) +" week_"+str(t) + " Base change from " + str(b)
 		if((p in model.rank_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
 			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
-				print str(p) +" "+str(t) + " Rank change from " + str(r)
+				print str(p) +" week_"+str(t) + " Rank change from " + str(r)
 
 
 print '\nTotal cost = ', model.OBJ()
