@@ -7,7 +7,7 @@ import cplex
 import logging
 
 #DEFINE GLOBAL NAMES HERE
-CREWDATA_CSV = 'SampleData_Crew1.csv'
+CREWDATA_CSV = 'SampleData_Crew.csv'
 DEMANDDATA_CSV = 'SampleData_Demand1.csv'
 VACATIONDATA_CSV = 'SampleData_Vacation1.csv'
 #CREWDATA_CSV = 'CrewData.csv'
