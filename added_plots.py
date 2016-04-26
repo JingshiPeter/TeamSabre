@@ -39,6 +39,7 @@ status_df = status_df.fillna(0)
 trainer_list = []
 trainee_list = []
 vacation_list = []
+transition_list = []
 
 # Trainer = 1
 
@@ -51,7 +52,6 @@ for p in model.trainer_pilots:
 				#status_df.set_value(status_df.pilots_id == p,'time',t)
 				#status_df.set_value(status_df.pilots_id == p, status_df.columns.values[t] == str(t) ,1)
 				status_df.ix[p, t]= 1
-
 
 
 
@@ -90,17 +90,26 @@ for p in model.pilots:
 
 
 # Trasition
-
-transition_list = []
+# b1 = 4 b2 = 5 'CPT'=6 'FO'=7
 for (p, r, f, b) in model.nonfix_var_set:
 	for t in model.time:
 		if((p in model.base_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
 			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
-				transition_list.append((p, t, 'b'+str(b)))
+				#transition_list.append((p, t, 'b'+str(b)))
+				if b == 1:
+					status_df.ix[p, t] = 4
+				if b == 2:
+					status_df.ix[p, t] = 5
+
+for (p, r, f, b) in model.nonfix_var_set:
+	for t in model.time:
 		if((p in model.rank_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
 			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
-				transition_list.append((p, t, 'r'+str(r)))
-
+				#transition_list.append((p, t, str(r)))
+				if r == 'CPT':
+					#status_df.ix[p, t] = 6
+				if r == 'FO':
+					#status_df.ix[p, t] = 7
 
 # csv
 # status_df.to_csv("status.csv",index = True)
