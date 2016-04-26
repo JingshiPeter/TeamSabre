@@ -1,5 +1,4 @@
 
-
 # Extract Data
 
 # pilots status
@@ -107,9 +106,9 @@ for (p, r, f, b) in model.nonfix_var_set:
 			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
 				#transition_list.append((p, t, str(r)))
 				if r == 'CPT':
-					#status_df.ix[p, t] = 6
+					status_df.ix[p, t] = 6
 				if r == 'FO':
-					#status_df.ix[p, t] = 7
+					status_df.ix[p, t] = 7
 
 # csv
 # status_df.to_csv("status.csv",index = True)
@@ -126,22 +125,25 @@ for b in model.base:
 	for r in model.rank:
 		for f in model.fleet:
 			for t in model.time:
-				if model.shortage[r,f,b,t].value> 0:
-					shortage_list.append((b,r,f,t,model.shortage[r,f,b,t].value))
+				if model.shortage[r,f,b,t].value > 0:
+					shortage_list.append((b,str(r)+str(f),t,-model.shortage[r,f,b,t].value))
+				if model.shortage[r,f,b,t].value == 0:
+					shortage_list.append((b,str(r)+str(f),t,0))
+
 				
 for b in model.base:
 	for r in model.rank:
 		for f in model.fleet:
 			for t in model.time:
-				if model.surplus[r,f,b,t].value> 0:
-					surplus_list.append((b,r,f,t,model.surplus[r,f,b,t].value))
-
-
-
+					surplus_list.append((b,str(r)+str(f),t,model.surplus[r,f,b,t].value))
+				
 
 shortage = pd.DataFrame(shortage_list)
-shortage.columns = ['']
+surplus = pd.DataFrame(surplus_list)
 
+# csv
+# shortage.to_csv("shortage.csv",index = True)
+# surplus.to_csv("surplus.csv",index = True)
 
 ##########  Draw shortage and surplus ##############
 
@@ -223,10 +225,11 @@ width = len(data.columns)/7*10
 height = len(data.index)/7*10
 fig, ax = plt.subplots(figsize=(width,height))
 
-#cMap = ListedColormap(['white', 'green', 'red','blue'])
+cMap = ListedColormap(['mintcream', 'lime', 'darkgreen','tomato','darkmagenta','plum','b','royalblue'])
+heatmap = ax.pcolor(data, cmap =cMap)
 
 #heatmap = ax.pcolor(data, cmap ="Pastel2")
-heatmap = ax.pcolor(data, cmap=plt.cm.Blues, alpha=0.8) 
+#heatmap = ax.pcolor(data, cmap=plt.cm.Blues, alpha=0.8) 
 
 #legend
 # Turn off all the ticks
@@ -239,9 +242,9 @@ cax = divider.append_axes("right", size="2%", pad=0.005)
 cbar = plt.colorbar(heatmap, cax = cax)
 
 cbar.ax.get_yaxis().set_ticks([])
-for j, lab in enumerate(['Idle','Trainer','Trainee','Vacation']):
-    cbar.ax.text(.5, (2 * j + 1) / 8.0, lab, ha='center', va='center', rotation=270)
-cbar.ax.get_yaxis().labelpad = 15
+for j, lab in enumerate(['Work','Trainer','Trainee','Vacation','b1','b2','CPT','FO']):
+    cbar.ax.text(.5, (1.45 * j + 1) / 12.0, lab, ha='center', va='center', rotation=270)
+cbar.ax.get_yaxis().labelpad =15
 cbar.ax.set_ylabel('status', rotation=270)
 
 
@@ -269,7 +272,7 @@ ax.set_xticks(np.arange(len(data.columns)) + 0.5)
 ax.set_xticklabels(data.columns, size= 10)
 
 
-#ax.grid(False)
+ax.grid(False)
 
 
 
