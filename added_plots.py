@@ -148,67 +148,95 @@ surplus = pd.DataFrame(surplus_list)
 ##########  Draw shortage and surplus ##############
 
 shortage_df = pd. read_csv('shortage.csv', index_col= 0)
+shortage_df.columns=['base','position','time','value']
+
 surplus_df = pd. read_csv('surplus.csv', index_col = 0)
+surplus_df.columns=['base','position','time','value']
 
-shortage_df['position'] = shortage_df[['rank','fleet']].apply(lambda x: '_'.join(x), axis=1)
-shortage_df['position'] = shortage_df['base'].map(str)+shortage_df['position']
 
-b1CPTA330 = shortage_df[(shortage_df.position =='1CPT_A330')][['value','time']]
-b1FOA320 = shortage_df[(shortage_df.position =='1FO_A320')][['value','time']]
-b1FOA330 = shortage_df[(shortage_df.position =='1FO_A330')][['value','time']]
-b2FOA330 = shortage_df[(shortage_df.position =='2FO_A330')][['value','time']]
+###### base 1 #######
+CPT_A320 = list(shortage_df[(shortage_df.position =='CPTA320')&(shortage_df.base == 1)]['value'])
+CPT_A330 = list(shortage_df[(shortage_df.position =='CPTA330')&(shortage_df.base == 1)]['value'])
+FO_A320 = list(shortage_df[(shortage_df.position =='FOA320')&(shortage_df.base == 1)]['value'])
+FO_A330 = list(shortage_df[(shortage_df.position =='FOA330')&(shortage_df.base == 1)]['value'])
 
+CPT_A320_s = list(surplus_df[(surplus_df.position =='CPTA320')&(surplus_df.base == 1)]['value'])
+CPT_A330_s = list(surplus_df[(surplus_df.position =='CPTA330')&(surplus_df.base == 1)]['value'])
+FO_A320_s = list(surplus_df[(surplus_df.position =='FOA320')&(surplus_df.base == 1)]['value'])
+FO_A330_s = list(surplus_df[(surplus_df.position =='FOA330')&(surplus_df.base == 1)]['value'])
 
 
 # plot shortage
 
 x = list(range(1,27))
 
-b1_CPT_A330 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1]
-b1_FO_A320  = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2]
-b1_FO_A330  = list(b1FOA330['value'])
-b2_FO_A330  = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1]
-fig, ax = plt.subplots(figsize=(90,20))
+fig, ax = plt.subplots(2, sharex=True, figsize=(90,20))
 N = 26
 ind = np.arange(N)
 
 width=0.3
 #fig = plt.figure()
 #ax = fig.add_subplot(111)
-rec1 = ax.bar(ind-width, b1_CPT_A330,width,color='b',align='center')
-rec2 = ax.bar(ind, b1_FO_A320,width,color='g',align='center')
-rec3 = ax.bar(ind+width, b1_FO_A330,width,color='r',align='center')
-rec4 = ax.bar(ind+width*2, b1_FO_A330,width,color='pink',align='center')
+rec1 = ax[0].bar(ind-width, CPT_A320,width,color='b',align='center')
+rec1_1 = ax[0].bar(ind-width, CPT_A320_s,width,color='b',align='center')
+rec2 = ax[0].bar(ind, CPT_A330,width,color='g',align='center')
+rec2_2 = ax[0].bar(ind, CPT_A330_s,width,color='g',align='center')
+rec3 = ax[0].bar(ind+width, FO_A320,width,color='r',align='center')
+rec3_3 = ax[0].bar(ind+width, FO_A320_s,width,color='r',align='center')
+rec4 = ax[0].bar(ind+width*2, FO_A330,width,color='pink',align='center')
+rec4_4 = ax[0].bar(ind+width*2, FO_A330_s,width,color='pink',align='center')
 
-ax.set_ylabel('shortage')
-ax.set_xticks(ind+width/2)
-ax.set_xticklabels(x)
-ax.legend((rec1[0],rec2[1],rec3[2],rec4[3]),('b1_CPT_A330','b1_FO_A320','b1_FO_A330','b2_FO_A330'),loc='best')
-#def autolabel(rec):
-  #  for rect in rec:
-    #    h = rect.get_height()
-     #  ax.text(rect.get_x()+rect.get_width()/2., 0.08*h, '%d'%int(h),
-          #      ha='center', va='bottom')
+ax[0].set_ylabel('shortage & surplus')
+ax[0].set_xticks(ind+width/2)
+ax[0].set_xticklabels(x)
+ax[0].legend((rec1[0],rec2[1],rec3[2],rec4[3]),('CPT_A320','CPT_A330','FO_A320','FO_A330'),loc='best')
 
-#autolabel(rec1)
-#autolabel(rec2)
-#autolabel(rec3)
-ax.autoscale(tight=True)
+
+ax[0].autoscale(tight=True)
+ax[0].set_title('Base 1 ', fontsize=14)
+
+
+
+###### base2 ##########
+
+CPT_A320 = list(shortage_df[(shortage_df.position =='CPTA320')&(shortage_df.base == 2)]['value'])
+CPT_A330 = list(shortage_df[(shortage_df.position =='CPTA330')&(shortage_df.base == 2)]['value'])
+FO_A320 = list(shortage_df[(shortage_df.position =='FOA320')&(shortage_df.base == 2)]['value'])
+FO_A330 = list(shortage_df[(shortage_df.position =='FOA330')&(shortage_df.base == 2)]['value'])
+
+CPT_A320_s = list(surplus_df[(surplus_df.position =='CPTA320')&(surplus_df.base == 2)]['value'])
+CPT_A330_s = list(surplus_df[(surplus_df.position =='CPTA330')&(surplus_df.base == 2)]['value'])
+FO_A320_s = list(surplus_df[(surplus_df.position =='FOA320')&(surplus_df.base == 2)]['value'])
+FO_A330_s = list(surplus_df[(surplus_df.position =='FOA330')&(surplus_df.base == 2)]['value'])
+
+
+rec1 = ax[1].bar(ind-width, CPT_A320,width,color='b',align='center')
+rec1_1 = ax[1].bar(ind-width, CPT_A320_s,width,color='b',align='center')
+rec2 = ax[1].bar(ind, CPT_A330,width,color='g',align='center')
+rec2_2 = ax[1].bar(ind, CPT_A330_s,width,color='g',align='center')
+rec3 = ax[1].bar(ind+width, FO_A320,width,color='r',align='center')
+rec3_3 = ax[1].bar(ind+width, FO_A320_s,width,color='r',align='center')
+rec4 = ax[1].bar(ind+width*2, FO_A330,width,color='pink',align='center')
+rec4_4 = ax[1].bar(ind+width*2, FO_A330_s,width,color='pink',align='center')
+
+ax[1].set_ylabel('shortage & surplus')
+ax[1].set_xticks(ind+width/2)
+ax[1].set_xticklabels(x)
+ax[1].legend((rec1[0],rec2[1],rec3[2],rec4[3]),('CPT_A320','CPT_A330','FO_A320','FO_A330'),loc='best')
+
+
+ax[1].autoscale(tight=True)
+ax[1].set_title('Base 2', fontsize=14)
+
+
 
 plt.show()
 
-    ####def equalizeLists(*lists):
-    #maxLen = max([len(list) for list in lists])
-    #for list in lists:
-      # list = list.extend([0]*(maxLen - len(list)))
-    #return maxLen
-#This will equalize the lengths of two or more lists automatically by adding zeros to the ends of the shorter ones. You could insert it into your code like so:
-
-         
 
 
 
-plt.savefig('shortage.png')
+
+plt.savefig('shortage&surplus.png')
 
 ##########  Draw pilot status heatmap ##############
 
@@ -225,7 +253,7 @@ width = len(data.columns)/7*10
 height = len(data.index)/7*10
 fig, ax = plt.subplots(figsize=(width,height))
 
-cMap = ListedColormap(['mintcream', 'lime', 'darkgreen','tomato','darkmagenta','plum','b','royalblue'])
+cMap = ListedColormap(['mintcream', 'lime', 'darkgreen','tomato','darkmagenta','plum','b','cornflowerblue'])
 heatmap = ax.pcolor(data, cmap =cMap)
 
 #heatmap = ax.pcolor(data, cmap ="Pastel2")
@@ -289,7 +317,7 @@ plt.show()
 
 
 
-#plt.savefig('test.png')
+plt.savefig('test.png')
 
 
 
