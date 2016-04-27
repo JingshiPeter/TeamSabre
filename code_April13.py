@@ -406,11 +406,11 @@ model.yall_y_binding = pe.Constraint(model.nonfix_var_set*model.time, rule = yal
 
 ###Yall setting rule(for fix-pilot part)
 def yall_setting_rule(model, p, r, f, b, t):
-	df_new = fixed_df.set_index(['Crew_ID','Rank','Cur_Fleet','Current_Base'])
-	if (p, r, f, b) in df_new.index:
+	# df_new = fixed_df.set_index(['Crew_ID','Rank','Cur_Fleet','Current_Base'])
+	# if (p, r, f, b) in df_new.index:
 		return model.Yall[p,r,f,b,t] == 1
-	else:
-		return model.Yall[p,r,f,b,t] == 0
+	# else:
+	# 	return model.Yall[p,r,f,b,t] == 0
 model.yall_setting = pe.Constraint(model.fix_var_set*model.time, rule = yall_setting_rule)
 
 
