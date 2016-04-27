@@ -324,7 +324,7 @@ model.OBJ = pe.Objective(expr = pe.summation(model.short_cost, model.S) + model.
 solver = pyomo.opt.SolverFactory('cplex')
 
 
-results = solver.solve(model, tee=True, keepfiles=true)
+results = solver.solve(model, tee=True, keepfiles=False)
 if (results.solver.status != pyomo.opt.SolverStatus.ok):
     logging.warning('Check solver not ok?')
 if (results.solver.termination_condition != pyomo.opt.TerminationCondition.optimal):  
@@ -339,8 +339,8 @@ print 'Mridula at time t, pilot P changed position: result visualzation'
 
 print 'Total cost = ', model.OBJ()
 
-#instance.solutions.load_from(results)
-model.solutions.load_from(results)
+instance.solutions.load_from(results)
+# model.solutions.load_from(results)
 
 
 

@@ -1,4 +1,8 @@
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 # Extract Data
 
 # pilots status
@@ -10,6 +14,7 @@
 # model.Trainee(p, b, t) == 1
 # model.V(p, t) == 1
 
+<<<<<<< HEAD
 #import matplotlib for research computer
 #matplotlib.use('Agg')
 
@@ -18,6 +23,12 @@ from matplotlib.colors import ListedColormap
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from pylab import *
+=======
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as pltimport 
+>>>>>>> master
 import pandas as pd
 import csv
 import numpy as np
@@ -38,7 +49,10 @@ status_df = status_df.fillna(0)
 trainer_list = []
 trainee_list = []
 vacation_list = []
+<<<<<<< HEAD
 transition_list = []
+=======
+>>>>>>> master
 
 # Trainer = 1
 
@@ -54,6 +68,10 @@ for p in model.trainer_pilots:
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 #trainer = pd.DataFrame(trainer_list)
 #trainer.columns = ['ID','Time','Base']
 
@@ -89,11 +107,17 @@ for p in model.pilots:
 
 
 # Trasition
+<<<<<<< HEAD
 # b1 = 4 b2 = 5 'CPT'=6 'FO'=7
+=======
+
+transition_list = []
+>>>>>>> master
 for (p, r, f, b) in model.nonfix_var_set:
 	for t in model.time:
 		if((p in model.base_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
 			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
+<<<<<<< HEAD
 				#transition_list.append((p, t, 'b'+str(b)))
 				if b == 1:
 					status_df.ix[p, t] = 4
@@ -316,6 +340,28 @@ plt.show()
 
 
 
+=======
+				transition_list.append((p, t, 'b'+str(b)))
+		if((p in model.rank_pilots) & (t in model.timestart) & ((p,r,f,b) in model.from_pos)):
+			if((model.Y[p, r, f, b, t].value == 1) & (model.Y[p, r, f, b, t+1].value == 0)):
+				transition_list.append((p, t, 'r'+str(r)))
+
+
+# csv
+# status_df.to_csv("status.csv",index = True)
+# copy file to local
+# scp -c blowfish -r js79735@me-dimitrovresearch.engr.utexas.edu:/Teamsabre/status.csv /home/user/Desktop/
+
+
+
+# heatmap
+
+plt.pcolor(status_df)
+plt.colorbar()
+fig = plt.figure().add_subplot(111)
+fig.set_xticklabels(status_df.columns)
+fig.set_yticklabels(status_df.index)
+>>>>>>> master
 
 plt.savefig('test.png')
 
