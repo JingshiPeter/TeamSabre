@@ -8,8 +8,8 @@ import logging
 
 #DEFINE GLOBAL NAMES HERE
 CREWDATA_CSV = 'SampleData_Crew.csv'
-DEMANDDATA_CSV = 'SampleData_Demand.csv'
-VACATIONDATA_CSV = 'SampleData_Vacation.csv'
+DEMANDDATA_CSV = 'SampleData_Demand1.csv'
+VACATIONDATA_CSV = 'SampleData_Vacation1.csv'
 
 crew_df = pandas.read_csv(CREWDATA_CSV)
 demand_df = pandas.read_csv(DEMANDDATA_CSV)
