@@ -133,7 +133,9 @@ for pilot in fixed_df['Crew_ID'].values:
 
 
 model.nonfix_pilots = pe.Set(initialize = nonfixed_df['Crew_ID'].values)
-model.fix_pilots = model.pilots - model.nonfix_pilots
+list_fix_pilots =[x for x in list(model.pilots.value) if x not in list(model.nonfix_pilots.value)]
+print "Number of nonfix_pilots is " + str(len(nonfixed_df['Crew_ID'].values))
+# model.fix_pilots = model.pilots - model.nonfix_pilots
 
 model.nonfix_var_set = pe.Set(initialize = nonfix_var_set)
 model.fix_var_set = pe.Set(initialize = fix_var_set)
