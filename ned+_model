@@ -335,10 +335,13 @@ model.load(results)
 
 print 'Daeun, Please start coding below'
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 print 'Mridula at time t, pilot P changed position: result visualzation'
 =======
+=======
+>>>>>>> origin/Daeun
 #output of the shortage.in that position. in that week. print
 def shortage_position(model, t):
 	return model.S[t, index = [t]] 
@@ -359,7 +362,6 @@ print 'Total cost = ', model.OBJ()
 
 instance.solutions.load_from(results)
 # model.solutions.load_from(results)
-
 
 
 
