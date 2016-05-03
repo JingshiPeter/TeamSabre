@@ -7,9 +7,9 @@ import cplex
 import logging
 
 #DEFINE GLOBAL NAMES HERE
-CREWDATA_CSV = 'CrewData.csv'
-DEMANDDATA_CSV = 'DemandData.csv'
-VACATIONDATA_CSV = 'VacationData.csv'
+CREWDATA_CSV = 'SampleData_Crew.csv'
+DEMANDDATA_CSV = 'SampleData_Demand1.csv'
+VACATIONDATA_CSV = 'SampleData_Vacation1.csv'
 
 crew_df = pandas.read_csv(CREWDATA_CSV)
 demand_df = pandas.read_csv(DEMANDDATA_CSV)
@@ -133,7 +133,9 @@ for pilot in fixed_df['Crew_ID'].values:
 
 
 model.nonfix_pilots = pe.Set(initialize = nonfixed_df['Crew_ID'].values)
-model.fix_pilots = model.pilots - model.nonfix_pilots
+list_fix_pilots =[x for x in list(model.pilots.value) if x not in list(model.nonfix_pilots.value)]
+print "Number of nonfix_pilots is " + str(len(nonfixed_df['Crew_ID'].values))
+# model.fix_pilots = model.pilots - model.nonfix_pilots
 
 model.nonfix_var_set = pe.Set(initialize = nonfix_var_set)
 model.fix_var_set = pe.Set(initialize = fix_var_set)
@@ -384,7 +386,8 @@ model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = max_vacation
 ### at least one vacation per quarter
 def min_vacation_rule(model, p, t):
 	lhs = 0
-	for i in range(13):
+	# range(13) to model.time
+	for i in model.time:
 		lhs += model.V[p,t+i]
 	lhs += model.VP[p,t]
 	return lhs >= 1
