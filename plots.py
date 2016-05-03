@@ -38,7 +38,7 @@ def get_vacation(model, p, t):
 	pilot = str(p)
 	if pilot in vacations:
 		if t+1 in vacations[pilot]:
-			return 300
+			return 72000
 		else:
 			return 0
 	else:
