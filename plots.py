@@ -193,7 +193,7 @@ model.VS = pe.Var(model.pilots*model.time, domain = pe.NonNegativeIntegers)
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 70000)
 model.base_transition_cost = pe.Param(model.nonfix_var_set*model.time, initialize = 15000)
 model.fleet_transition_cost = pe.Param(model.nonfix_var_set*model.time, initialize = 5000+15000+2000)
-model.vacation_penalty = pe.Param(model.pilots*model.quarterstart, initialize = 300)
+model.vacation_penalty = pe.Param(model.pilots*model.quarterstart, initialize = 71000)
 model.seniority_reward = pe.Param(model.pilots*model.time, initialize = 50)
 
 
