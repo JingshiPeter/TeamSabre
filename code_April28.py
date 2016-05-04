@@ -193,7 +193,7 @@ model.VS = pe.Var(model.pilots*model.time, domain = pe.NonNegativeIntegers)
 model.short_cost = pe.Param(model.rank*model.fleet*model.base*model.time, initialize = 70000)
 model.base_transition_cost = pe.Param(model.nonfix_var_set*model.time, initialize = 15000)
 model.fleet_transition_cost = pe.Param(model.nonfix_var_set*model.time, initialize = 5000+15000+2000)
-model.vacation_penalty = pe.Param(model.pilots*model.quarterstart, initialize = 300)
+model.vacation_penalty = pe.Param(model.pilots*model.quarterstart, initialize = 73000)
 model.seniority_reward = pe.Param(model.pilots*model.time, initialize = 50)
 
 
@@ -338,7 +338,7 @@ model.demand_constraint = pe.Constraint(model.rank*model.fleet*model.base*model.
 # model.Demand.pprint()
 
 #at time t, a pilot should occupy one and only one position
-#checked
+#checkedD
 def pilot_pos_rule(model, p, t):
 	summ=0
 	for r in model.rank:
