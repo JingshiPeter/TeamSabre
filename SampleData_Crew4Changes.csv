@@ -1,0 +1,11 @@
+Crew_ID,Rank,Cur_Fleet,Seniority,Bid_RankChange,Bid_BaseChange,Bid_FleetChange,Last_safety_recurring,Last_refresher_training,Instructor,Retiring_Date,Current_Base
+1,CPT,A320,2,,,,12/16/15,12/1/15,,,1
+2,CPT,A320,4,,,A330,11/23/15,11/26/15,,6/25/16,1
+3,FO,A320,2,,,,12/15/15,11/5/15,TR3233_1,,1
+4,FO,A320,3,,2,,11/27/15,11/3/15,,,1
+5,CPT,A330,2,,,,11/24/15,11/7/15,,,1
+6,CPT,A320,1,,,,10/2/15,12/18/15,,,2
+7,CPT,A330,1,,,,10/3/15,12/25/15,,,2
+8,CPT,A330,3,,,,12/14/15,12/15/15,,,2
+9,FO,A330,1,,1,,10/27/15,12/31/15,,,2
+10,FO,A330,2,Y,,,12/17/15,12/17/15,,,2
