@@ -24,7 +24,7 @@ import numpy as np
 
 ##########  Draw shortage and surplus ##############
 
-shortage_df = pd. read_csv('shortage_28.csv', index_col= 0)
+shortage_df = pd. read_csv('shortage.csv', index_col= 0)
 shortage_df.columns=['base','position','time','value']
 
 #surplus_df = pd. read_csv('surplus_n.csv', index_col = 0)
@@ -102,7 +102,7 @@ plt.savefig('shortage.png')
 
 ##########  Draw pilot status heatmap ##############
 
-status_df = pd.read_csv('status_28.csv')
+status_df = pd.read_csv('status.csv')
 
 
 
@@ -110,7 +110,7 @@ status_df = pd.read_csv('status_28.csv')
 #column_labels = list(status_df.index)
 
 
-data =  pd.read_csv('status_28.csv',index_col=0)
+data =  pd.read_csv('status.csv',index_col=0)
 width = len(data.columns)/7*10
 height = len(data.index)/7*10
 fig, ax = plt.subplots(figsize=(width,height))
