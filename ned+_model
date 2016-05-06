@@ -334,6 +334,14 @@ if (results.solver.termination_condition != pyomo.opt.TerminationCondition.optim
 model.load(results)
 
 print 'Daeun, Please start coding below'
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+
+print 'Mridula at time t, pilot P changed position: result visualzation'
+=======
+=======
+>>>>>>> origin/Daeun
 #output of the shortage.in that position. in that week. print
 def shortage_position(model, t):
 	return model.S[t, index = [t]] 
@@ -347,9 +355,14 @@ def pilot_vacation_slot_exceed(model, t):
 	model.pilot_vacation_slot_exceed = pe.Constraint(model.time, rule = pilot_vacation_slot_exceed)
   
 print 'Mridula, Please start coding below'
+>>>>>>> origin/Daeun
 
 
 print 'Total cost = ', model.OBJ()
+
+instance.solutions.load_from(results)
+# model.solutions.load_from(results)
+
 
 
 

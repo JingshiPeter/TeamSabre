@@ -1,6 +1,6 @@
-#! /opt/local/bin/expect -f
-spawn ssh your_eid@me-dimitrovresearch.engr.utexas.edu
+#! /usr/bin/expect -f
+spawn ssh js79735@me-dimitrovresearch.engr.utexas.edu
 expect -re "assword: *$"
 sleep 1
-send "your_password\r"
+send "Y2MwOWViZjc0Yzg2OTU3Y2QzODBlNWQx\r"
 interact
